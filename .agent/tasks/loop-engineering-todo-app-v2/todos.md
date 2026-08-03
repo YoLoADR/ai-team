@@ -15,8 +15,14 @@
 - [x] 0.2 Créer GitHub Project V2 Kanban (existant: project #3 "AI Team Loop Engineering")
   - Preuve : champ "Workflow Status" créé avec 5 colonnes (Backlog, Spec Ready, In Progress, In Review, Done)
   - Field ID: PVTSSF_lAHOAPvD3s4BfO2kzhZjQuc
-- [ ] 0.3 Créer GitHub App `ai-team-loop` + installer sur le repo `ai-team` (INTERVENTION MANUELLE REQUISE)
-- [ ] 0.4 Configurer secrets GitHub (OLLAMA_CLOUD_API_KEY, GITHUB_APP_PRIVATE_KEY, NETLIFY_AUTH_TOKEN, NETLIFY_SITE_ID) (INTERVENTION MANUELLE)
+- [x] 0.3 Créer GitHub App `ai-team-loop` + installer sur le repo `ai-team`
+  - Preuve : App ID 4472414, Client ID Iv23li47EYGYrVA1WXkm, installée sur YoLoADR/ai-team
+  - Permissions : Contents (Read-only), Issues (R/W), Pull requests (R/W)
+  - Webhook URL : http://109.199.97.174:8095 (port ouvert dans iptables)
+  - Note : port 8095 pas accessible depuis l'extérieur (pare-feu Contabo) → utiliser GitHub Actions comme relay
+- [x] 0.4 Configurer secrets GitHub (OLLAMA_CLOUD_API_KEY, APP_PRIVATE_KEY, APP_ID, WEBHOOK_SECRET)
+  - Preuve : `gh secret list --repo YoLoADR/ai-team` → APP_ID, APP_PRIVATE_KEY, OLLAMA_CLOUD_API_KEY, WEBHOOK_SECRET
+  - Note : NETLIFY_AUTH_TOKEN + NETLIFY_SITE_ID à ajouter plus tard (pas bloquant pour le loop)
 - [x] 0.5 Initialiser Git dans `/Users/yohannravino/Factory/ai-team/` et committer le plan v2
   - Preuve : commit ec18341 — `docs: add context.md to v2 plan`
 
