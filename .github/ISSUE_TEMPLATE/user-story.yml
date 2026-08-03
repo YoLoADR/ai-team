@@ -1,0 +1,49 @@
+name: User Story
+description: Nouvelle fonctionnalité ou amélioration (créée par le PO bot ou l'humain)
+labels: ["user-story"]
+body:
+  - type: textarea
+    id: story
+    attributes:
+      label: User Story
+      description: Format "En tant que [rôle], je veux [fonctionnalité] afin de [bénéfice]"
+      placeholder: |
+        En tant qu'utilisateur, je veux marquer une todo comme terminée
+        afin de suivre ma progression
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Critères d'acceptation
+      description: Liste vérifiable (Given/When/Then)
+      placeholder: |
+        - Given une todo avec le statut "todo"
+        - When je clique sur le bouton "Terminer"
+        - Then le statut passe à "done"
+        - And la todo apparaît barrée
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical
+    attributes:
+      label: Notes techniques
+      description: Pointeurs vers fichiers, API routes concernées, contraintes
+      placeholder: |
+        - API: PATCH /api/todos/[id] avec { status: "done" }
+        - Composant: TodoItem.tsx
+        - Validation: Zod (status enum)
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priorité
+      options:
+        - low
+        - medium
+        - high
+        - urgent
+    validations:
+      required: true

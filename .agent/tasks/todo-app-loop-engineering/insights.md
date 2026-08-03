@@ -110,6 +110,35 @@ Une GitHub App avec 3 tokens machine (PO, DEV, LEAD) est la solution conforme.
 
 - Décision : Hermes (pas OpenHands) — possède déjà profiles, kanban, skills, cron, docker
 
-- Un sous-agent a créé un plan alternatif (OpenHands + Turso) dans
-  `loop-engineering-todo-app/`. Ce plan est incorrect (OpenHands au lieu d'Hermes,
-  Turso au lieu de SQLite). Le plan canonique est dans `todo-app-loop-engineering/`.
+### Recadrage (correction utilisateur)
+
+L'utilisateur a corrigé mon scope : **la todo app elle-même n'est pas mon travail**.
+C'est l'équipe d'agents (PO, Dev, Lead Dev) qui doit la créer en autonomie via Hermes.
+
+Mon rôle : **infrastructure** (skills, GitHub config, scripts VM), **vérification**
+et **correction** des agents — pas le code de la todo.
+
+J'avais commencé à scaffold le projet Next.js (create-next-app + install deps).
+Ce travail appartient au dev-bot. Je me suis recentré sur :
+- Phase 4 : GitHub Config (CI, ISSUE_TEMPLATE, PR_TEMPLATE)
+- Phase 5 : Hermes Skills (po-workflow, dev-tdd, lead-review)
+- Phase 6 : Scripts infra (vm-provision.sh, hermes-profiles.sh, github-app-setup.md)
+
+### Phase 4-6 (infrastructure loop engineering)
+
+Créé les fichiers suivants :
+
+**Phase 4 — GitHub Config** :
+- `.github/workflows/ci.yml` : CI lint + typecheck + test sur PR
+- `.github/ISSUE_TEMPLATE/user-story.yml` : template pour le PO (user story + critères Given/When/Then + notes tech + priorité)
+- `.github/PULL_REQUEST_TEMPLATE.md` : checklist de review pour le Lead Dev
+
+**Phase 5 — Hermes Skills** (procédures injectées dans les profils) :
+- `skills/po-workflow/SKILL.md` : PO — analyser demande, rédiger user story, créer Issue GitHub, assigner dev-bot
+- `skills/dev-tdd/SKILL.md` : Dev — TDD strict (RED → GREEN → REFACTOR), stack Next.js + SQLite + Drizzle + Zod + Vitest, créer PR
+- `skills/lead-review/SKILL.md` : Lead Dev — checklist review (conventions, tests, sécurité, critères acceptation), approve + merge OU request-changes avec commentaires formatés `file:line → problème → suggestion`
+
+**Phase 6 — Scripts infra** :
+- `infra/vm-provision.sh` : script bash pour créer VM 101 sur Precision (Proxmox) — clone template Ubuntu 24.04, config CPU/RAM/disk, installe Docker + Hermes
+- `infra/hermes-profiles.sh` : script bash pour créer les 3 profils Hermes (po-bot, dev-bot, lead-dev-bot) avec modèles Ollama Cloud, Docker backend, cron jobs (PO 1h, Dev 30min, Lead Dev 30min)
+- `infra/github-app-setup.md` : procédure complète pour créer GitHub App + 3 tokens machine (Option A: 1 app 1 token simple, Option B: 3 apps isolation maximale) + config Ollama Cloud API key + démarrage gateway + supervision Telegram
