@@ -1,23 +1,24 @@
-## User Story
+# Pull Request
 
-Closes #{{ issue number }}
+## Related Issue
 
-## Description des changements
+Closes #
 
-<!-- Décrire ce que fait cette PR -->
+## What this PR does
+
+<!-- Developer agent: describe the changes -->
 
 ## Tests
 
-- [ ] Tests unitaires/d'intégration écrits (TDD — tests avant code)
-- [ ] `npm run test` passe
-- [ ] `npm run typecheck` passe
-- [ ] `npm run lint` passe
+- [ ] Unit tests added/updated
+- [ ] Component tests added/updated
+- [ ] All tests pass (`npm run test`)
+- [ ] Lint passes (`npm run lint`)
+- [ ] Typecheck passes (`npx tsc --noEmit`)
 
-## Checklist Review (Lead Dev)
+## Checklist
 
-- [ ] Conventions Next.js/TypeScript respectées (App Router, types stricts)
-- [ ] Tests couvrent les changements
-- [ ] Pas de secrets/credentials commités
-- [ ] Validation Zod côté API
-- [ ] Gestion d'erreurs appropriée (404, 400, 500)
-- [ ] Critères d'acceptation de la user story vérifiés
+- [ ] Code follows the project conventions
+- [ ] No secrets committed
+- [ ] API endpoints validated with Zod
+- [ ] UI accessible and responsive
