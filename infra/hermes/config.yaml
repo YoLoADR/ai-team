@@ -1,0 +1,23 @@
+providers:
+  ollama_cloud:
+    base_url: https://ollama.com/api/v1
+    api_key: ${OLLAMA_CLOUD_API_KEY}
+    # Ollama Cloud is OpenAI-compatible
+    api_type: openai
+
+settings:
+  default_provider: ollama_cloud
+  confirm_tool_execution: false
+  auto_approve: true
+  memory_enabled: true
+  loop_engineering: true
+
+toolsets:
+  - github
+  - git
+  - shell
+  - file
+
+logging:
+  level: info
+  file: ~/.hermes/logs/loop-engineering.log

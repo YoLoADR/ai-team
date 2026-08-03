@@ -1,0 +1,118 @@
+- generic [ref=f3e2]:
+  - generic [ref=f3e3]:
+    - link "Skip to content" [ref=f3e4] [cursor=pointer]:
+      - /url: "#start-of-content"
+    - banner "Global navigation menu" [ref=f3e8]:
+      - generic [ref=f3e9]:
+        - generic [ref=f3e10]:
+          - button "Open menu" [ref=f3e12] [cursor=pointer]
+          - link "Homepage (g then d)" [ref=f3e15] [cursor=pointer]:
+            - /url: /
+        - button "Open quick search dialog, type / to search" [ref=f3e21] [cursor=pointer]:
+          - generic [ref=f3e23]:
+            - generic:
+              - text: Type
+              - generic: /
+              - text: to search
+        - generic [ref=f3e24]:
+          - generic [ref=f3e25]:
+            - generic [ref=f3e28]:
+              - link "Chat with Copilot" [ref=f3e30] [cursor=pointer]:
+                - /url: /copilot
+              - button "Open Copilot…" [ref=f3e35] [cursor=pointer]
+            - button "Create new..." [ref=f3e37] [cursor=pointer]
+            - generic [ref=f3e39]:
+              - link "All issues (g then i)" [ref=f3e40] [cursor=pointer]:
+                - /url: /issues
+              - link "All pull requests (g then p)" [ref=f3e44] [cursor=pointer]:
+                - /url: /pulls
+              - link "All repositories" [ref=f3e47] [cursor=pointer]:
+                - /url: /repos
+          - link "You have unread notifications (g then n)" [ref=f3e50] [cursor=pointer]:
+            - /url: /notifications
+          - button "Open user navigation menu" [ref=f3e54] [cursor=pointer]:
+            - img "Yohann Diravino" [ref=f3e55]
+  - main [ref=f3e58]:
+    - generic [ref=f3e59]:
+      - heading [level=2] [ref=f3e61]:
+        - text: Install
+        - link "ai-team-loop" [ref=f3e62] [cursor=pointer]:
+          - /url: https://github.com/apps/ai-team-loop
+      - generic [ref=f3e63]:
+        - paragraph [ref=f3e64]:
+          - text: Install on your personal account Yohann Diravino
+          - img "@YoLoADR" [ref=f3e65]
+        - generic [ref=f3e66]:
+          - generic [ref=f3e67]:
+            - generic [ref=f3e68]:
+              - paragraph [ref=f3e69]: "for these repositories:"
+              - radiogroup "Repository access" [ref=f3e71]:
+                - generic [ref=f3e73]:
+                  - generic [ref=f3e74]:
+                    - radio "All repositories" [ref=f3e75] [cursor=pointer]
+                    - generic [ref=f3e76]:
+                      - generic [ref=f3e77] [cursor=pointer]: All repositories
+                      - generic [ref=f3e78]: This applies to all current and future repositories owned by the resource owner. Also includes public repositories (read-only).
+                  - generic [ref=f3e79]:
+                    - radio "Only select repositories" [checked] [ref=f3e80] [cursor=pointer]
+                    - generic [ref=f3e81]:
+                      - generic [ref=f3e82] [cursor=pointer]: Only select repositories
+                      - generic [ref=f3e83]: Select at least one repository. Also includes public repositories (read-only).
+              - generic [ref=f3e133]:
+                - group [ref=f3e134]:
+                  - button "Select repositories" [ref=f3e135] [cursor=pointer]
+                - generic [ref=f3e244]: Selected 1 repository.
+                - generic [ref=f3e259]:
+                  - button "Remove ai-team" [ref=f3e262] [cursor=pointer]
+                  - generic [ref=f3e267]:
+                    - generic [ref=f3e268]: YoLoADR
+                    - text: /ai-team
+            - paragraph [ref=f3e84]: "with these permissions:"
+            - list [ref=f3e86]:
+              - listitem [ref=f3e87]:
+                - strong [ref=f3e90]: Read
+                - text: access to code and metadata
+              - listitem [ref=f3e91]:
+                - strong [ref=f3e94]: Read
+                - text: and
+                - strong [ref=f3e95]: write
+                - text: access to issues and pull requests
+            - separator [ref=f3e96]
+            - button "Install" [ref=f3e97] [cursor=pointer]
+          - link "Cancel" [ref=f3e98] [cursor=pointer]:
+            - /url: /apps/ai-team-loop
+  - contentinfo [ref=f3e99]:
+    - heading "Footer" [level=2] [ref=f3e100]
+    - generic [ref=f3e101]:
+      - generic [ref=f3e102]:
+        - link "GitHub Homepage" [ref=f3e103] [cursor=pointer]:
+          - /url: https://github.com
+        - generic [ref=f3e106]: © 2026 GitHub, Inc.
+      - navigation "Footer" [ref=f3e107]:
+        - heading "Footer navigation" [level=3] [ref=f3e108]
+        - list "Footer navigation" [ref=f3e109]:
+          - listitem [ref=f3e110]:
+            - link "Terms" [ref=f3e111] [cursor=pointer]:
+              - /url: https://docs.github.com/site-policy/github-terms/github-terms-of-service
+          - listitem [ref=f3e112]:
+            - link "Privacy" [ref=f3e113] [cursor=pointer]:
+              - /url: https://docs.github.com/site-policy/privacy-policies/github-privacy-statement
+          - listitem [ref=f3e114]:
+            - link "Security" [ref=f3e115] [cursor=pointer]:
+              - /url: https://github.com/security
+          - listitem [ref=f3e116]:
+            - link "Status" [ref=f3e117] [cursor=pointer]:
+              - /url: https://www.githubstatus.com/
+          - listitem [ref=f3e118]:
+            - link "Community" [ref=f3e119] [cursor=pointer]:
+              - /url: https://github.community/
+          - listitem [ref=f3e120]:
+            - link "Docs" [ref=f3e121] [cursor=pointer]:
+              - /url: https://docs.github.com/
+          - listitem [ref=f3e122]:
+            - link "Contact" [ref=f3e123] [cursor=pointer]:
+              - /url: https://support.github.com?tags=dotcom-footer
+          - listitem [ref=f3e124]:
+            - button "Manage cookies" [ref=f3e126] [cursor=pointer]
+          - listitem [ref=f3e127]:
+            - button "Do not share my personal information" [ref=f3e129] [cursor=pointer]

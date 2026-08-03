@@ -1,0 +1,258 @@
+- generic [ref=f4e2]:
+  - generic [ref=f4e3]:
+    - link "Skip to content" [ref=f4e4] [cursor=pointer]:
+      - /url: "#start-of-content"
+    - banner "Global navigation menu" [ref=f4e8]:
+      - generic [ref=f4e9]:
+        - generic [ref=f4e10]:
+          - button "Open menu" [ref=f4e12] [cursor=pointer]
+          - link "Homepage (g then d)" [ref=f4e15] [cursor=pointer]:
+            - /url: /
+        - generic [ref=f4e18]:
+          - navigation "Breadcrumbs" [ref=f4e19]:
+            - list [ref=f4e20]:
+              - listitem [ref=f4e21]:
+                - link "Settings" [ref=f4e22] [cursor=pointer]:
+                  - /url: /settings
+          - button "Open quick search dialog, type / to search" [ref=f4e26] [cursor=pointer]:
+            - generic [ref=f4e28]:
+              - generic:
+                - text: Type
+                - generic: /
+                - text: to search
+        - generic [ref=f4e29]:
+          - generic [ref=f4e30]:
+            - generic [ref=f4e33]:
+              - link "Chat with Copilot" [ref=f4e35] [cursor=pointer]:
+                - /url: /copilot
+              - button "Open Copilot…" [ref=f4e40] [cursor=pointer]
+            - button "Create new..." [ref=f4e42] [cursor=pointer]
+            - generic [ref=f4e44]:
+              - link "All issues (g then i)" [ref=f4e45] [cursor=pointer]:
+                - /url: /issues
+              - link "All pull requests (g then p)" [ref=f4e49] [cursor=pointer]:
+                - /url: /pulls
+              - link "All repositories" [ref=f4e52] [cursor=pointer]:
+                - /url: /repos
+          - link "You have unread notifications (g then n)" [ref=f4e55] [cursor=pointer]:
+            - /url: /notifications
+          - button "Open user navigation menu" [ref=f4e59] [cursor=pointer]:
+            - img "Yohann Diravino" [ref=f4e60]
+  - generic [ref=f4e64]:
+    - button "Dismiss this message" [active] [ref=f4e65] [cursor=pointer]
+    - alert [ref=f4e68]: Okay, ai-team-loop was installed on the @YoLoADR account.
+  - main [ref=f4e71]:
+    - generic [ref=f4e72]:
+      - generic [ref=f4e73]:
+        - generic [ref=f4e74]:
+          - img "@YoLoADR" [ref=f4e75]
+          - generic [ref=f4e76]:
+            - heading "Yohann Diravino (YoLoADR) settings" [level=1] [ref=f4e77]:
+              - link "Yohann Diravino (YoLoADR)" [ref=f4e78] [cursor=pointer]:
+                - /url: /YoLoADR
+              - generic [ref=f4e79]: settings
+            - paragraph [ref=f4e81]: Your personal account
+        - button "Switch settings context" [ref=f4e85] [cursor=pointer]
+      - generic [ref=f4e88]:
+        - navigation "User settings" [ref=f4e93]:
+          - list [ref=f4e95]:
+            - listitem [ref=f4e96]:
+              - link "Public profile" [ref=f4e97] [cursor=pointer]:
+                - /url: /settings/profile
+            - listitem [ref=f4e99]:
+              - link "Account" [ref=f4e100] [cursor=pointer]:
+                - /url: /settings/admin
+            - listitem [ref=f4e102]:
+              - link "Appearance" [ref=f4e103] [cursor=pointer]:
+                - /url: /settings/appearance
+            - listitem [ref=f4e105]:
+              - link "Accessibility" [ref=f4e106] [cursor=pointer]:
+                - /url: /settings/accessibility
+            - listitem [ref=f4e108]:
+              - link "Notifications" [ref=f4e109] [cursor=pointer]:
+                - /url: /settings/notifications
+            - listitem [ref=f4e111]
+            - listitem [ref=f4e112]:
+              - generic [ref=f4e115]:
+                - heading "Access" [level=2] [ref=f4e117]
+                - list "Access" [ref=f4e118]:
+                  - listitem [ref=f4e119]:
+                    - button "Billing and licensing" [ref=f4e120] [cursor=pointer]
+                  - listitem [ref=f4e122]:
+                    - link "Emails" [ref=f4e123] [cursor=pointer]:
+                      - /url: /settings/emails
+                  - listitem [ref=f4e125]:
+                    - link "Password and authentication" [ref=f4e126] [cursor=pointer]:
+                      - /url: /settings/security
+                  - listitem [ref=f4e128]:
+                    - link "Sessions" [ref=f4e129] [cursor=pointer]:
+                      - /url: /settings/sessions
+                  - listitem [ref=f4e131]:
+                    - link "SSH and GPG keys" [ref=f4e132] [cursor=pointer]:
+                      - /url: /settings/keys
+                  - listitem [ref=f4e134]:
+                    - link "Credentials" [ref=f4e135] [cursor=pointer]:
+                      - /url: /settings/credentials
+                  - listitem [ref=f4e137]:
+                    - link "Organizations" [ref=f4e138] [cursor=pointer]:
+                      - /url: /settings/organizations
+                  - listitem [ref=f4e140]:
+                    - link "Enterprises" [ref=f4e141] [cursor=pointer]:
+                      - /url: /settings/enterprises
+                  - listitem [ref=f4e143]:
+                    - link "Teams" [ref=f4e144] [cursor=pointer]:
+                      - /url: /settings/teams
+                  - listitem [ref=f4e146]:
+                    - button "Moderation" [ref=f4e147] [cursor=pointer]
+            - listitem [ref=f4e149]
+            - listitem [ref=f4e150]:
+              - generic [ref=f4e153]:
+                - heading "Code, planning, and automation" [level=2] [ref=f4e155]
+                - list "Code, planning, and automation" [ref=f4e156]:
+                  - listitem [ref=f4e157]:
+                    - link "Repositories" [ref=f4e158] [cursor=pointer]:
+                      - /url: /settings/repositories
+                  - listitem [ref=f4e160]:
+                    - link "Codespaces" [ref=f4e161] [cursor=pointer]:
+                      - /url: /settings/codespaces
+                  - listitem [ref=f4e163]:
+                    - link "Packages" [ref=f4e164] [cursor=pointer]:
+                      - /url: /settings/packages
+                  - listitem [ref=f4e166]:
+                    - button "Copilot" [ref=f4e167] [cursor=pointer]
+                  - listitem [ref=f4e169]:
+                    - link "Pages" [ref=f4e170] [cursor=pointer]:
+                      - /url: /settings/pages
+                  - listitem [ref=f4e172]:
+                    - link "Saved replies" [ref=f4e173] [cursor=pointer]:
+                      - /url: /settings/replies
+            - listitem [ref=f4e175]
+            - listitem [ref=f4e176]:
+              - generic [ref=f4e179]:
+                - heading "Security" [level=2] [ref=f4e181]
+                - list "Security" [ref=f4e182]:
+                  - listitem [ref=f4e183]:
+                    - link "Code security" [ref=f4e184] [cursor=pointer]:
+                      - /url: /settings/security_analysis
+            - listitem [ref=f4e186]
+            - listitem [ref=f4e187]:
+              - generic [ref=f4e190]:
+                - heading "Integrations" [level=3] [ref=f4e192]
+                - list "Integrations" [ref=f4e193]:
+                  - listitem [ref=f4e194]:
+                    - link "Applications" [ref=f4e195] [cursor=pointer]:
+                      - /url: /settings/installations
+                  - listitem [ref=f4e197]:
+                    - link "Scheduled reminders" [ref=f4e198] [cursor=pointer]:
+                      - /url: /settings/reminders
+            - listitem [ref=f4e200]
+            - listitem [ref=f4e201]:
+              - generic [ref=f4e204]:
+                - heading "Archives" [level=2] [ref=f4e206]
+                - list "Archives" [ref=f4e207]:
+                  - listitem [ref=f4e208]:
+                    - link "Security log" [ref=f4e209] [cursor=pointer]:
+                      - /url: /settings/security-log
+                  - listitem [ref=f4e211]:
+                    - link "Sponsorship log" [ref=f4e212] [cursor=pointer]:
+                      - /url: /settings/sponsors-log
+            - listitem [ref=f4e214]
+            - listitem [ref=f4e215]:
+              - link "Developer settings" [ref=f4e216] [cursor=pointer]:
+                - /url: /settings/apps
+        - generic [ref=f4e221]:
+          - generic [ref=f4e222]:
+            - img "ai-team-loop" [ref=f4e224]
+            - generic [ref=f4e225]:
+              - heading "ai-team-loop" [level=2] [ref=f4e226]
+              - generic [ref=f4e227]:
+                - generic [ref=f4e228]: Installed August 3, 2026 12:34now
+                - generic [ref=f4e231]:
+                  - text: Developed by
+                  - link "YoLoADR" [ref=f4e234] [cursor=pointer]:
+                    - /url: /YoLoADR
+                - link "App settings" [ref=f4e238] [cursor=pointer]:
+                  - /url: /settings/apps/ai-team-loop
+                - link "https://github.com/YoLoADR/ai-team" [ref=f4e242] [cursor=pointer]:
+                  - /url: https://github.com/YoLoADR/ai-team
+          - heading "Permissions" [level=2] [ref=f4e244]
+          - list [ref=f4e245]:
+            - listitem [ref=f4e246]:
+              - strong [ref=f4e249]: Read
+              - text: access to code and metadata
+            - listitem [ref=f4e250]:
+              - strong [ref=f4e253]: Read
+              - text: and
+              - strong [ref=f4e254]: write
+              - text: access to issues and pull requests
+          - heading "Repository access" [level=2] [ref=f4e256]
+          - generic [ref=f4e257]:
+            - generic [ref=f4e260]:
+              - radiogroup "Repository access" [ref=f4e262]:
+                - generic [ref=f4e264]:
+                  - generic [ref=f4e265]:
+                    - radio "All repositories" [ref=f4e266] [cursor=pointer]
+                    - generic [ref=f4e267]:
+                      - generic [ref=f4e268] [cursor=pointer]: All repositories
+                      - generic [ref=f4e269]: This applies to all current and future repositories owned by the resource owner. Also includes public repositories (read-only).
+                  - generic [ref=f4e270]:
+                    - radio "Only select repositories" [checked] [ref=f4e271] [cursor=pointer]
+                    - generic [ref=f4e272]:
+                      - generic [ref=f4e273] [cursor=pointer]: Only select repositories
+                      - generic [ref=f4e274]: Select at least one repository. Also includes public repositories (read-only).
+              - generic [ref=f4e276]:
+                - group [ref=f4e277]:
+                  - button "Select repositories" [ref=f4e278] [cursor=pointer]
+                - generic [ref=f4e281]: Selected 1 repository.
+                - generic [ref=f4e284]:
+                  - button "Remove ai-team" [ref=f4e287] [cursor=pointer]
+                  - generic [ref=f4e292]:
+                    - generic [ref=f4e293]: YoLoADR
+                    - text: /ai-team
+            - button "Save" [disabled] [ref=f4e294]
+          - button "Cancel" [disabled] [ref=f4e297]
+          - heading "Danger zone" [level=2] [ref=f4e301]
+          - generic [ref=f4e302]:
+            - generic [ref=f4e303]:
+              - button "Suspend" [ref=f4e305] [cursor=pointer]
+              - strong [ref=f4e306]: Suspend your installation
+              - generic [ref=f4e307]: This will block the app access to your resources.
+            - generic [ref=f4e308]:
+              - button "Uninstall" [ref=f4e310] [cursor=pointer]
+              - strong [ref=f4e311]: Uninstall "ai-team-loop"
+              - generic [ref=f4e312]: This will remove the app and revoke access to all resources.
+  - contentinfo [ref=f4e313]:
+    - heading "Footer" [level=2] [ref=f4e314]
+    - generic [ref=f4e315]:
+      - generic [ref=f4e316]:
+        - link "GitHub Homepage" [ref=f4e317] [cursor=pointer]:
+          - /url: https://github.com
+        - generic [ref=f4e320]: © 2026 GitHub, Inc.
+      - navigation "Footer" [ref=f4e321]:
+        - heading "Footer navigation" [level=3] [ref=f4e322]
+        - list "Footer navigation" [ref=f4e323]:
+          - listitem [ref=f4e324]:
+            - link "Terms" [ref=f4e325] [cursor=pointer]:
+              - /url: https://docs.github.com/site-policy/github-terms/github-terms-of-service
+          - listitem [ref=f4e326]:
+            - link "Privacy" [ref=f4e327] [cursor=pointer]:
+              - /url: https://docs.github.com/site-policy/privacy-policies/github-privacy-statement
+          - listitem [ref=f4e328]:
+            - link "Security" [ref=f4e329] [cursor=pointer]:
+              - /url: https://github.com/security
+          - listitem [ref=f4e330]:
+            - link "Status" [ref=f4e331] [cursor=pointer]:
+              - /url: https://www.githubstatus.com/
+          - listitem [ref=f4e332]:
+            - link "Community" [ref=f4e333] [cursor=pointer]:
+              - /url: https://github.community/
+          - listitem [ref=f4e334]:
+            - link "Docs" [ref=f4e335] [cursor=pointer]:
+              - /url: https://docs.github.com/
+          - listitem [ref=f4e336]:
+            - link "Contact" [ref=f4e337] [cursor=pointer]:
+              - /url: https://support.github.com?tags=dotcom-footer
+          - listitem [ref=f4e338]:
+            - button "Manage cookies" [ref=f4e340] [cursor=pointer]
+          - listitem [ref=f4e341]:
+            - button "Do not share my personal information" [ref=f4e343] [cursor=pointer]
