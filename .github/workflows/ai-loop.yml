@@ -61,11 +61,15 @@ jobs:
         run: echo "No trigger type detected, skipping" && exit 0
 
       - name: Setup SSH
+        env:
+          SSH_KEY_B64: ${{ secrets.CARAPACE_SSH_KEY_B64 }}
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.CARAPACE_SSH_KEY_B64 }}" | base64 -d > ~/.ssh/carapace_key
+          printf '%s' "$SSH_KEY_B64" | base64 -d > ~/.ssh/carapace_key
           chmod 600 ~/.ssh/carapace_key
           ssh-keyscan -H ${{ secrets.CARAPACE_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+          # Verify key format
+          head -1 ~/.ssh/carapace_key
 
       - name: Trigger PO Agent (spec generation)
         if: steps.trigger.outputs.trigger_type == 'po-spec'
