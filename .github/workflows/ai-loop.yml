@@ -1,0 +1,86 @@
+name: AI Loop Engineering
+
+on:
+  issues:
+    types: [labeled, opened]
+  pull_request:
+    types: [opened, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      trigger_type:
+        description: 'Type de trigger (po-spec | dev-impl | lead-review)'
+        required: true
+        default: 'po-spec'
+      issue_number:
+        description: 'Numéro d issue ou PR'
+        required: true
+        default: '1'
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  trigger-agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Determine trigger type
+        id: trigger
+        run: |
+          TRIGGER_TYPE=""
+          ISSUE_NUMBER=""
+
+          if [ "${{ github.event_name }}" = "issues" ]; then
+            ISSUE_NUMBER="${{ github.event.issue.number }}"
+            LABEL="${{ github.event.label.name }}"
+            ACTION="${{ github.event.action }}"
+
+            if [ "$ACTION" = "opened" ]; then
+              TRIGGER_TYPE="po-spec"
+            elif [ "$LABEL" = "feature" ] || [ "$LABEL" = "bug" ] || [ "$LABEL" = "user-story" ]; then
+              TRIGGER_TYPE="po-spec"
+            elif [ "$LABEL" = "ready-for-dev" ]; then
+              TRIGGER_TYPE="dev-impl"
+            fi
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            ISSUE_NUMBER="${{ github.event.pull_request.number }}"
+            TRIGGER_TYPE="lead-review"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TRIGGER_TYPE="${{ inputs.trigger_type }}"
+            ISSUE_NUMBER="${{ inputs.issue_number }}"
+          fi
+
+          echo "trigger_type=$TRIGGER_TYPE" >> $GITHUB_OUTPUT
+          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+          echo "Trigger: $TRIGGER_TYPE, Issue/PR: $ISSUE_NUMBER"
+
+      - name: Skip if no trigger
+        if: steps.trigger.outputs.trigger_type == ''
+        run: echo "No trigger type detected, skipping" && exit 0
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.CARAPACE_SSH_KEY }}" > ~/.ssh/carapace_key
+          chmod 600 ~/.ssh/carapace_key
+          ssh-keyscan -H ${{ secrets.CARAPACE_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Trigger PO Agent (spec generation)
+        if: steps.trigger.outputs.trigger_type == 'po-spec'
+        run: |
+          ssh -i ~/.ssh/carapace_key -o StrictHostKeyChecking=no ${{ secrets.CARAPACE_USER }}@${{ secrets.CARAPACE_HOST }} \
+            "cd /opt/ai-team-loop && ./trigger-agent.sh po ${{ steps.trigger.outputs.issue_number }} ${{ github.repository }}" 2>&1 || true
+
+      - name: Trigger Dev Agent (implementation)
+        if: steps.trigger.outputs.trigger_type == 'dev-impl'
+        run: |
+          ssh -i ~/.ssh/carapace_key -o StrictHostKeyChecking=no ${{ secrets.CARAPACE_USER }}@${{ secrets.CARAPACE_HOST }} \
+            "cd /opt/ai-team-loop && ./trigger-agent.sh dev ${{ steps.trigger.outputs.issue_number }} ${{ github.repository }}" 2>&1 || true
+
+      - name: Trigger Lead Review Agent (PR review)
+        if: steps.trigger.outputs.trigger_type == 'lead-review'
+        run: |
+          ssh -i ~/.ssh/carapace_key -o StrictHostKeyChecking=no ${{ secrets.CARAPACE_USER }}@${{ secrets.CARAPACE_HOST }} \
+            "cd /opt/ai-team-loop && ./trigger-agent.sh review ${{ steps.trigger.outputs.issue_number }} ${{ github.repository }}" 2>&1 || true

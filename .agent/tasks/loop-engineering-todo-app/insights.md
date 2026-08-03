@@ -10,34 +10,33 @@ workflow sur un mini projet Next.js API-first en TDD, avec déploiement Netlify.
 
 ## Décisions clés de la session
 
-1. **Orchestration** : OpenHands (pas Hermes)
-   - Hermes est un agent **mono-utilisateur** avec auto-apprentissage.
-   - Son "loop engineering" est un mécanisme d'auto-amélioration des skills, pas un
-     workflow multi-agent PO → Dev → Lead Dev.
-   - OpenHands supporte nativement le multi-agent, les automations GitHub, et
-     l'isolation par backend/workspaces.
+1. **Orchestration** : Hermes avec 3 profils distincts (`po-bot`, `dev-bot`, `lead-dev-bot`)
+   - Hermes est installé dans un LXC dédié (`ai-agents-vm`, VMID 102 sur Precision).
+   - Chaque profil a son propre modèle, son propre workspace Docker, et son propre `cwd`.
+   - Les 3 bots sont isolés pour éviter conflits et incohérences.
+   - Le workflow PO → Dev → Lead Dev est exécuté séquentiellement par profil.
 
 2. **LLM** : Ollama Cloud Pro ($20/mo)
-   - **PO** : `kimi-k2.6` (70B, raisonnement long, spécifications)
-   - **Dev** : `deepseek-v4-pro` (14B, coding)
-   - **Lead Dev** : `deepseek-v4-pro` (14B, prompt orienté review)
-   - Ollama Cloud est **OpenAI-compatible** via `https://ollama.com/api/v1`.
+   - **PO** : `minimax-m3:cloud` (choix utilisateur)
+   - **Dev** : `kimi-k2.7-code:cloud` (choix utilisateur)
+   - **Lead Dev** : `deepseek-v4-pro:cloud` (choix utilisateur)
+   - Ollama Cloud endpoint configuré : `https://ollama.com/v1`.
 
 3. **Hébergement** : Precision uniquement (pas Hydre)
-   - Nouvelle VM `openhands-vm` sur Proxmox.
-   - Docker Compose pour OpenHands.
+   - LXC `ai-agents-vm` sur Proxmox (VMID 102).
+   - Hermes gère les workspaces Docker internes.
 
-4. **Isolation** : 3 workspaces Docker séparés (po/, dev/, review/)
-   - Chaque bot a son propre volume monté.
-   - Pas de mémoire partagée entre les rôles.
+4. **Isolation** : 3 profils Hermes, chacun avec son propre container Docker (`terminal.backend: docker`)
+   - `po-bot` : `python:3.11-slim`
+   - `dev-bot` : `node:20-slim`
+   - `lead-dev-bot` : `node:20-slim`
 
-5. **GitHub** : 1 seule GitHub App (`ai-team-loop`)
-   - Pas besoin de créer plusieurs comptes GitHub.
-   - Permissions fines : PR R/W, Contents R, Issues R/W.
+5. **GitHub** : Accès via PAT OAuth (`gho_...`) et/ou tokens d'installation
+   - Repo cloné dans `/home/hermes/repo`.
 
 6. **Kanban** : GitHub Project V2
-   - Colonnes : Backlog → Spec Ready → In Progress → In Review → Done.
-   - Mouvements automatiques via OpenHands + workflow GitHub Actions.
+   - Projet créé : https://github.com/users/YoLoADR/projects/3
+   - Issue #1 créée : https://github.com/YoLoADR/ai-team/issues/1
 
 7. **Projet démo** : Todo App Next.js
    - API-first : route handlers Next.js.

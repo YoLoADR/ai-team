@@ -14,18 +14,19 @@
 - [x] 0.5 Initialiser Git dans `/Users/yohannravino/Factory/ai-team/` et push sur origin
   - Preuve : commits pushed to https://github.com/YoLoADR/ai-team/tree/main
 
-## Phase 1 — Infrastructure OpenHands
-- [x] 1.1 Préparer Precision (Debian 13 trixie) — Docker + Docker Compose installés
-  - Preuve : `docker --version` = 29.7.1, `docker compose version` = v5.3.1, service active
-- [x] 1.2 Créer container LXC `openhands-vm` (VMID 101, 4 vCPU, 8 Go RAM, 40 Go)
-  - Preuve : IP `192.168.1.75`, hostname `openhands-vm`
-- [x] 1.3 Déployer OpenHands sur Precision (host) via docker-compose
-  - Preuve : container `openhands-loop` up sur http://precision:3000 → HTTP 200
-- [x] 1.4 Configurer les profils LLM (PO, Dev, LeadDev) avec Ollama Cloud
-  - Preuve : `/opt/openhands-loop/config/llm_profiles.yaml` créé avec kimi-k2.6 / deepseek-v4-pro
-- [x] 1.5 Configurer les workspaces isolés (po/, dev/, review/)
-  - Preuve : `/opt/openhands-loop/workspaces/{po,dev,review}/` créés
-- [ ] 1.6 Tester connectivité : prompt simple sur chaque profil (capture résultat)
+## Phase 1 — Infrastructure Hermes
+- [x] 1.1 LXC `ai-agents-vm` créé sur Precision (VMID 102, 2 vCPU, 4 Go RAM, 30 Go)
+  - Preuve : `pct config 102` → hostname `ai-agents-vm`, IP `192.168.1.76`
+- [x] 1.2 Hermes installé dans le LXC
+  - Preuve : binaires `hermes`, `po-bot`, `dev-bot`, `lead-dev-bot` dans `/home/hermes/.local/bin/`
+- [x] 1.3 3 profils créés avec modèles Ollama Cloud
+  - `po-bot` → `minimax-m3:cloud`
+  - `dev-bot` → `kimi-k2.7-code:cloud`
+  - `lead-dev-bot` → `deepseek-v4-pro:cloud`
+- [x] 1.4 Repo `ai-team` cloné dans `/home/hermes/repo`
+  - Preuve : `git status` OK, remote `origin` = https://github.com/YoLoADR/ai-team
+- [~] 1.5 Vérifier/corriger la config des bots (modèles, GitHub, workspace)
+- [ ] 1.6 Tester connectivité : prompt simple sur chaque profil
 
 ## Phase 2 — Projet Todo Next.js (sous-projet `apps/todo/`)
 > ⚠️ Cette phase est réalisée par les agents IA, pas par l'orchestrateur.
