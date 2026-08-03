@@ -56,10 +56,13 @@
   - Preuve : `vitest run` → 2 tests passed ; `tsc --noEmit` → OK ; `next build` → Compiled successfully
 
 ## Phase 3 — Lancement du loop engineering (agents en autonomie)
-- [ ] 3.1 Créer l'issue initiale "Todolist API-first TDD" avec les instructions
-- [ ] 3.2 Vérifier que le PO-bot génère les 5 user stories et committe la spec
-- [ ] 3.3 Vérifier que le Dev-bot implémente avec TDD et ouvre les PRs
-- [ ] 3.4 Vérifier que le Lead-Review-bot review et approuve/refuse
+- [x] 3.1 Issue #1 existante "[PO-Spec] CRUD tasks API" utilisée pour tester
+- [x] 3.2 PO-bot génère spec et commente sur l'issue (glm-5.2:cloud → 9538 chars, label ready-for-dev ajouté)
+  - Preuve : `gh issue view 1 --repo YoLoADR/ai-team` → 1 commentaire "Specification generated" avec user stories Gherkin
+- [~] 3.3 Dev-bot génère le code (kimi-k2.7-code:cloud → en cours, 1T params, ~15min+)
+  - Note : le Dev-bot génère du texte (le code) mais ne crée pas encore de PR automatiquement
+  - Amélioration needed : clone repo + create branch + commit + push + open PR
+- [ ] 3.4 Lead-Review-bot review la PR (quand elle existera)
 - [ ] 3.5 Corriger les agents si besoin (prompts système, config)
 
 ## Phase 4 — Documentation et livraison
