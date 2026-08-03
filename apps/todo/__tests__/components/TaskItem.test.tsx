@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi } from 'vitest';
 import { TaskItem } from '@/components/TaskItem';
 import type { Task } from '@/lib/db/schema';
@@ -22,19 +23,19 @@ describe('TaskItem', () => {
     expect(screen.getByText('Apprendre TDD')).toBeInTheDocument();
   });
 
-  test('appelle onToggle avec le bon id', () => {
+  test('appelle onToggle avec le bon id', async () => {
     const onToggle = vi.fn();
     render(<TaskItem task={task} onToggle={onToggle} onDelete={vi.fn()} />);
 
-    screen.getByRole('checkbox').click();
+    await userEvent.click(screen.getByRole('checkbox'));
     expect(onToggle).toHaveBeenCalledWith(1);
   });
 
-  test('appelle onDelete avec le bon id', () => {
+  test('appelle onDelete avec le bon id', async () => {
     const onDelete = vi.fn();
     render(<TaskItem task={task} onToggle={vi.fn()} onDelete={onDelete} />);
 
-    screen.getByRole('button', { name: /supprimer/i }).click();
+    await userEvent.click(screen.getByRole('button', { name: /supprimer/i }));
     expect(onDelete).toHaveBeenCalledWith(1);
   });
 

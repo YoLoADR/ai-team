@@ -12,7 +12,7 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
       <div className="flex items-center gap-3">
         <input
           type="checkbox"
-          checked={task.completed}
+          checked={task.completed ?? false}
           onChange={() => onToggle(task.id)}
           aria-label={`Marquer ${task.title} comme ${task.completed ? 'non terminé' : 'terminé'}`}
           className="h-5 w-5 cursor-pointer rounded border-gray-300 text-blue-600 focus:ring-blue-500"
