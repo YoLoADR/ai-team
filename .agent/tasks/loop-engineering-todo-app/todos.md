@@ -8,7 +8,8 @@
 - [ ] 0.2 Créer GitHub Project V2 Kanban dans `ai-team` (Backlog → Spec Ready → In Progress → In Review → Done)
 - [ ] 0.3 Créer GitHub App `ai-team-loop` + installer sur le repo `ai-team`
 - [ ] 0.4 Vérifier compte Ollama Cloud Pro + récupérer API key
-- [ ] 0.5 Initialiser Git dans `/Users/yohannravino/Factory/ai-team/` et committer le plan
+- [x] 0.5 Initialiser Git dans `/Users/yohannravino/Factory/ai-team/` et committer le plan
+  - Preuve : commit `f78db76` — `chore: init plan loop engineering todo sous-projet apps/todo`
 
 ## Phase 1 — Infrastructure OpenHands
 - [ ] 1.1 Créer VM `openhands-vm` sur Precision (Proxmox, 4 vCPU, 8 Go RAM, 40 Go disque)
