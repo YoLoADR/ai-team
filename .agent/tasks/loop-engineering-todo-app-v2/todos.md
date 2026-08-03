@@ -56,14 +56,17 @@
   - Preuve : `vitest run` → 2 tests passed ; `tsc --noEmit` → OK ; `next build` → Compiled successfully
 
 ## Phase 3 — Lancement du loop engineering (agents en autonomie)
-- [x] 3.1 Issue #1 existante "[PO-Spec] CRUD tasks API" utilisée pour tester
-- [x] 3.2 PO-bot génère spec et commente sur l'issue (glm-5.2:cloud → 9538 chars, label ready-for-dev ajouté)
-  - Preuve : `gh issue view 1 --repo YoLoADR/ai-team` → 1 commentaire "Specification generated" avec user stories Gherkin
-- [~] 3.3 Dev-bot génère le code (kimi-k2.7-code:cloud → en cours, 1T params, ~15min+)
-  - Note : le Dev-bot génère du texte (le code) mais ne crée pas encore de PR automatiquement
-  - Amélioration needed : clone repo + create branch + commit + push + open PR
-- [ ] 3.4 Lead-Review-bot review la PR (quand elle existera)
-- [ ] 3.5 Corriger les agents si besoin (prompts système, config)
+- [x] 3.1 Issue #1 existante "[PO-Spec] CRUD tasks API" utilisée pour tester (manuel)
+- [x] 3.2 Issue #5 créée "[PO-Spec] Todolist API-first TDD - 5 user stories" (automatique)
+- [x] 3.3 PO-bot génère spec et commente sur l'issue (glm-5.2:cloud → 10401 chars, label ready-for-dev)
+  - Preuve : `gh issue view 5 --repo YoLoADR/ai-team` → 1 commentaire "Specification generated"
+- [x] 3.4 Dev-bot génère le code, crée une branche, push, ouvre une PR (kimi-k2.7-code:cloud)
+  - Preuve : PR #6 ouverte, 9 fichiers, +815/-275 lignes, branche ai/impl/5
+- [x] 3.5 Lead-Review-bot review la PR avec diff réel (qwen3.5:397b:cloud)
+  - Preuve : `gh pr view 6 --repo YoLoADR/ai-team` → 1 review CHANGES_REQUESTED avec analyse détaillée
+- [x] 3.6 Workflow GitHub Actions relay déclenche les agents automatiquement
+  - Preuve : `gh run list --repo YoLoADR/ai-team` → runs issues + pull_request + workflow_dispatch
+- [ ] 3.7 Corriger les agents si besoin (prompts système, config) — en cours d'itération
 
 ## Phase 4 — Documentation et livraison
 - [ ] 4.1 Mettre à jour `README.md` du projet
