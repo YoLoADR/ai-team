@@ -16,17 +16,18 @@
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "drizzle-orm": "^0.33.0",
     "next": "^14.2.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "better-sqlite3": "^11.3.0",
-    "drizzle-orm": "^0.33.0",
-    "zod": "^3.23.8",
-    "swr": "^2.2.5"
+    "swr": "^2.2.5",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@testing-library/react": "^16.0.0",
     "@testing-library/jest-dom": "^6.4.8",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/better-sqlite3": "^7.6.11",
     "@types/node": "^20.14.0",
     "@types/react": "^18.3.4",

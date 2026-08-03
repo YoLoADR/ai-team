@@ -7,7 +7,7 @@ import { TaskForm } from '@/components/TaskForm';
 describe('TaskForm', () => {
   test('affiche le champ et le bouton de soumission', () => {
     render(<TaskForm onSubmit={vi.fn()} />);
-    expect(screen.getByPlaceholderText(/nouvelle tâche/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/nouvelle tâche/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /ajouter/i })).toBeInTheDocument();
   });
 
@@ -15,13 +15,11 @@ describe('TaskForm', () => {
     const onSubmit = vi.fn();
     render(<TaskForm onSubmit={onSubmit} />);
 
-    const input = screen.getByPlaceholderText(/nouvelle tâche/i);
+    const input = screen.getByLabelText(/nouvelle tâche/i);
     const button = screen.getByRole('button', { name: /ajouter/i });
 
-    input.focus();
-    input.setAttribute('value', 'Apprendre TDD');
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-    button.click();
+    await userEvent.type(input, 'Apprendre TDD');
+    await userEvent.click(button);
 
     expect(onSubmit).toHaveBeenCalledWith({ title: 'Apprendre TDD' });
   });
@@ -30,7 +28,7 @@ describe('TaskForm', () => {
     const onSubmit = vi.fn();
     render(<TaskForm onSubmit={onSubmit} />);
 
-    screen.getByRole('button', { name: /ajouter/i }).click();
+    await userEvent.click(screen.getByRole('button', { name: /ajouter/i }));
 
     expect(onSubmit).not.toHaveBeenCalled();
   });
@@ -39,11 +37,9 @@ describe('TaskForm', () => {
     const onSubmit = vi.fn();
     render(<TaskForm onSubmit={onSubmit} />);
 
-    const input = screen.getByPlaceholderText(/nouvelle tâche/i);
-    input.focus();
-    input.setAttribute('value', 'Faire du sport');
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-    screen.getByRole('button', { name: /ajouter/i }).click();
+    const input = screen.getByLabelText(/nouvelle tâche/i);
+    await userEvent.type(input, 'Faire du sport');
+    await userEvent.click(screen.getByRole('button', { name: /ajouter/i }));
 
     expect(input).toHaveValue('');
   });

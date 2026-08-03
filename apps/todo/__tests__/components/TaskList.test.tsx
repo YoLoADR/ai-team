@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi } from 'vitest';
 import { TaskList } from '@/components/TaskList';
 import type { Task } from '@/lib/db/schema';
@@ -42,17 +41,17 @@ describe('TaskList', () => {
     expect(screen.getByText('Boire du café')).toBeInTheDocument();
   });
 
-  test('propage les événements toggle et delete', async () => {
+  test('propage les événements toggle et delete', () => {
     const onToggle = vi.fn();
     const onDelete = vi.fn();
     render(<TaskList tasks={tasks} onToggle={onToggle} onDelete={onDelete} />);
 
     const checkboxes = screen.getAllByRole('checkbox');
-    await userEvent.click(checkboxes[0]);
+    checkboxes[0].click();
     expect(onToggle).toHaveBeenCalledWith(1);
 
     const deleteButtons = screen.getAllByRole('button', { name: /supprimer/i });
-    await userEvent.click(deleteButtons[1]);
+    deleteButtons[1].click();
     expect(onDelete).toHaveBeenCalledWith(2);
   });
 });
