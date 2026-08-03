@@ -21,8 +21,8 @@ en TDD, avec déploiement Netlify.
 
 2. **LLM** : Ollama Cloud Pro ($20/mo)
    - **PO** : `glm-5.2` (modèle actuel de l'opérateur, bon en rédaction)
-   - **Dev** : `deepseek-coder-v2` (spécialisé code)
-   - **Lead Dev** : `qwen3-235b` (excellent en raisonnement analytique, review de diff)
+   - **Dev** : `kimi-k2.7-code` (spécialisé code)
+   - **Lead Dev** : `qwen3.5:397b` (excellent en raisonnement analytique, review de diff)
    - Ollama Cloud est OpenAI-compatible via `https://ollama.com/api/v1`.
 
 3. **Hébergement** : VPS Contabo « carapace » (109.199.97.174)
@@ -60,15 +60,15 @@ en TDD, avec déploiement Netlify.
 | Modèle | Usage potentiel |
 |---|---|
 | `glm-5.2` | PO — rédaction user stories, specs |
-| `deepseek-coder-v2` | Dev — code TDD |
-| `qwen3-235b` | Lead-Review — analyse de diff, commentaires inline |
+| `kimi-k2.7-code` | Dev — code TDD |
+| `qwen3.5:397b` | Lead-Review — analyse de diff, commentaires inline |
 | `mistral-large-3:675b` | Fallback puissant, bon français |
 | `minimax-m2.7` | Alternative coding |
 
 ## Contraintes techniques identifiées
 
 - **Ollama Cloud Pro** : 3 modèles simultanés max.
-  - PO (glm-5.2) + Dev (deepseek-coder-v2) + LeadDev (qwen3-235b) = 3 → au maximum.
+  - PO (glm-5.2) + Dev (kimi-k2.7-code) + LeadDev (qwen3.5:397b) = 3 → au maximum.
   - Si un 4ème rôle est ajouté, il faudra upgrader vers Max ($100/mo) ou séquencer.
 
 - **Rate limits Pro** : ~2.5M tokens/session, ~14M/semaine.
@@ -80,7 +80,7 @@ en TDD, avec déploiement Netlify.
   - Webhook GitHub non natif → adapter Node.js minimal (webhook-adapter).
   - Fallback possible : orchestrateur Python custom avec LangGraph + API Ollama Cloud.
 
-- **qwen3-235b** : modèle 235B, potentiellement coûteux en tokens.
+- **qwen3.5:397b** : modèle 235B, potentiellement coûteux en tokens.
   - Mitigation : limiter le contexte du diff à review (pas tout le repo).
 
 - **Netlify + SQLite** : SQLite local ne se déploie pas en serverless.
@@ -110,6 +110,6 @@ en TDD, avec déploiement Netlify.
 
 - L'intégration OpenHands ↔ GitHub Project V2 n'est pas totalement documentée dans
   les détails. Il faudra probablement tester et ajuster.
-- La review automatique par qwen3-235b pourrait manquer de nuance. À itérer.
+- La review automatique par qwen3.5:397b pourrait manquer de nuance. À itérer.
 - Le déploiement Netlify d'une app Next.js avec routes API + SQLite doit être validé
   (variables d'environnement, cold starts) — basculer vers Turso en prod.

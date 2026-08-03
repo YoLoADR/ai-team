@@ -8,9 +8,9 @@
 
 1. **Product Owner** (glm-5.2) : produit la spec technique (user stories Gherkin,
    API routes, schéma de données, critères d'acceptation) à partir d'une issue GitHub.
-2. **Developer** (deepseek-coder-v2) : implémente le sous-projet en TDD (tests d'abord,
+2. **Developer** (kimi-k2.7-code) : implémente le sous-projet en TDD (tests d'abord,
    code ensuite).
-3. **Lead Developer** (qwen3-235b) : review la PR, poste des commentaires actionnables
+3. **Lead Developer** (qwen3.5:397b) : review la PR, poste des commentaires actionnables
    et approuve ou demande des changements.
 
 ## Contraintes
@@ -20,7 +20,7 @@
 - API-first : toute la logique métier expose des route handlers Next.js.
 - TDD strict : chaque feature est accompagnée de tests qui passent.
 - Déploiement : Netlify via GitHub Actions (Turso en prod pour persistance).
-- Pas de Claude/GPT : utiliser glm-5.2 (PO), deepseek-coder-v2 (Dev), qwen3-235b
+- Pas de Claude/GPT : utiliser glm-5.2 (PO), kimi-k2.7-code (Dev), qwen3.5:397b
   (Lead-Review) via Ollama Cloud.
 
 ## Plan de référence

@@ -208,13 +208,13 @@ max_tokens = 8192
 
 # Profil Dev
 [llm.dev]
-model = "openai/deepseek-coder-v2"
+model = "openai/kimi-k2.7-code"
 temperature = 0.2
 max_tokens = 16384
 
 # Profil Lead-Review
 [llm.leaddev]
-model = "openai/qwen3-235b"
+model = "openai/qwen3.5:397b"
 temperature = 0.1
 max_tokens = 8192
 
@@ -397,7 +397,7 @@ jobs:
 - SSH carapace → créer dossier `/opt/ai-team-loop/`
 - Installer Docker + Docker Compose si manquant
 - Déployer OpenHands runtime + webhook-adapter
-- Configurer les 3 profils LLM (glm-5.2, deepseek-coder-v2, qwen3-235b)
+- Configurer les 3 profils LLM (glm-5.2, kimi-k2.7-code, qwen3.5:397b)
 - Configurer les 3 workspaces Docker isolés (po/, dev/, review/)
 - Tester connectivité : prompt simple sur chaque profil
 
@@ -437,9 +437,9 @@ jobs:
 
 | Risque | Mitigation |
 |---|---|
-| `qwen3-235b` coûteux (235B) | Limiter le contexte du diff à review (pas tout le repo) |
+| `qwen3.5:397b` coûteux (235B) | Limiter le contexte du diff à review (pas tout le repo) |
 | OpenHands webhook non natif | Adapter Node.js minimal (webhook-adapter) |
-| `deepseek-coder-v2` inférieur en review | Prompt système détaillé + check-list structurée |
+| `kimi-k2.7-code` inférieur en review | Prompt système détaillé + check-list structurée |
 | Concurrency Ollama Cloud (3 modèles max) | 3 rôles = 3 modèles → au max, séquencer si besoin |
 | Netlify + Next.js API routes + SQLite | SQLite ne marche pas en serverless → utiliser Turso en prod OU API routes sans DB persistante |
 | Agents ne respectent pas le TDD | Lead-Review-bot vérifie la présence de tests avant le code |

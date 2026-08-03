@@ -68,7 +68,7 @@ apps/todo/
 - Notes techniques : routes API, composants, validation.
 - **Ne jamais écrire de code.**
 
-### Developer (deepseek-coder-v2)
+### Developer (kimi-k2.7-code)
 - Travaille en TDD strict : tests rouges avant code.
 - Implémente les route handlers API d'abord, puis les composants.
 - Utilise Drizzle + Better-SQLite3 pour la persistence (dev).
@@ -76,7 +76,7 @@ apps/todo/
 - Lance `npm run lint`, `npx tsc --noEmit` et `npm run test` avant de pusher.
 - Crée une branche `ai/impl/#NUMERO-issue` et ouvre une PR vers `main`.
 
-### Lead Developer (qwen3-235b)
+### Lead Developer (qwen3.5:397b)
 - Review la PR en analysant :
   1. Qualité du code (style, patterns, complexité)
   2. Couverture de tests (présents ? passent ?)
@@ -111,7 +111,7 @@ Voir `.env.example` pour le template.
 
 ## Contraintes dures
 
-- ❌ Pas de Claude/GPT : utiliser glm-5.2 (PO), deepseek-coder-v2 (Dev), qwen3-235b (Lead-Review).
+- ❌ Pas de Claude/GPT : utiliser glm-5.2 (PO), kimi-k2.7-code (Dev), qwen3.5:397b (Lead-Review).
 - ❌ Pas d'hébergement local des LLMs : utiliser Ollama Cloud.
 - ❌ Pas d'Hydre : orchestration via OpenHands sur VPS Contabo « carapace ».
 - ✅ Tout le code testé par Vitest (unit + intégration).

@@ -20,8 +20,8 @@ nécessaires pour mettre en place l'environnement des agents.
 | Aspect | v1 (existant) | v2 (ce plan) |
 |---|---|---|
 | LLM PO | kimi-k2.6 | glm-5.2 (Ollama Cloud) |
-| LLM Dev | deepseek-v4-pro | deepseek-coder-v2 (Ollama Cloud) |
-| LLM Lead-Review | deepseek-v4-pro | qwen3-235b (Ollama Cloud) |
+| LLM Dev | deepseek-v4-pro | kimi-k2.7-code (Ollama Cloud) |
+| LLM Lead-Review | deepseek-v4-pro | qwen3.5:397b (Ollama Cloud) |
 | Hébergement | Precision (conflit cubes sellers) | VPS Contabo « carapace » (lab+staging) |
 | Stockage | Turso | SQLite local (Better-SQLite3) |
 | Scope | 3 issues figées | 5 user stories décidées par le PO-bot |
@@ -39,7 +39,7 @@ nécessaires pour mettre en place l'environnement des agents.
 | CRUD tasks + filtres + tri + priorités | Real-time / WebSockets |
 | CI (lint, typecheck, test) + CD Netlify | Monitoring / Sentry |
 | GitHub Project V2 Kanban + automations | Notifications push |
-| 3 bots : PO (glm-5.2), Dev (deepseek-coder-v2), Lead Dev (qwen3-235b) | |
+| 3 bots : PO (glm-5.2), Dev (kimi-k2.7-code), Lead Dev (qwen3.5:397b) | |
 
 ## Stack technique
 
@@ -57,8 +57,8 @@ nécessaires pour mettre en place l'environnement des agents.
 | Kanban | GitHub Project V2 |
 | Orchestration bots | OpenHands runtime self-hosted (Docker sur carapace) |
 | LLM PO | glm-5.2 (Ollama Cloud) |
-| LLM Dev | deepseek-coder-v2 (Ollama Cloud) |
-| LLM Lead Dev | qwen3-235b (Ollama Cloud, prompt review) |
+| LLM Dev | kimi-k2.7-code (Ollama Cloud) |
+| LLM Lead Dev | qwen3.5:397b (Ollama Cloud, prompt review) |
 
 ## Architecture cible
 
@@ -80,13 +80,13 @@ VPS Contabo « carapace » (109.199.97.174)
     ├── openhands-runtime                   # OpenHands headless (port 3000)
     ├── webhook-adapter                     # Node.js : GitHub webhook → OpenHands API
     ├── workspace-po                        # Volume isolé PO (glm-5.2)
-    ├── workspace-dev                       # Volume isolé Dev (deepseek-coder-v2)
-    └── workspace-review                    # Volume isolé Lead-Review (qwen3-235b)
+    ├── workspace-dev                       # Volume isolé Dev (kimi-k2.7-code)
+    └── workspace-review                    # Volume isolé Lead-Review (qwen3.5:397b)
 
 Ollama Cloud (https://ollama.com/api/v1)
 ├── glm-5.2            → PO (rédaction user stories Gherkin)
-├── deepseek-coder-v2  → Dev (code TDD)
-└── qwen3-235b         → Lead-Review (analyse de diff, commentaires inline)
+├── kimi-k2.7-code  → Dev (code TDD)
+└── qwen3.5:397b         → Lead-Review (analyse de diff, commentaires inline)
 
 GitHub
 ├── Repo: yohannravino/ai-team (créé par script setup)
@@ -111,14 +111,14 @@ Netlify
    → commit spec.md sur branche ai/spec/#{issue}
    → commente sur l'issue → move → "Spec Ready"
    ↓
-3. Dev-bot (deepseek-coder-v2) lit la spec
+3. Dev-bot (kimi-k2.7-code) lit la spec
    → écrit les tests d'abord (red phase)
    → implémente (green phase)
    → lance CI locale (lint + typecheck + test)
    → push sur branche ai/impl/#{issue} → ouvre PR
    → move → "In Review"
    ↓
-4. Lead-Review-bot (qwen3-235b) récupère le diff
+4. Lead-Review-bot (qwen3.5:397b) récupère le diff
    → analyse : qualité, couverture tests, conformité spec, sécurité, perf
    → poste review avec commentaires inline
    ├── APPROVE → merge auto → move "Done" → déclenche CD Netlify
@@ -134,7 +134,7 @@ Netlify
 - ✅ Lead Dev doit donner des commentaires actionnables, pas seulement un "LGTM".
 - ✅ La TODO du projet todolist est gérée par les agents (PO/Dev/Lead), pas par l'opérateur.
 - 🚫 Pas d'utilisation d'Hydre : tout tourne sur carapace et Ollama Cloud.
-- 🚫 Pas de Claude/GPT : seuls glm-5.2, deepseek-coder-v2, qwen3-235b (Ollama Cloud).
+- 🚫 Pas de Claude/GPT : seuls glm-5.2, kimi-k2.7-code, qwen3.5:397b (Ollama Cloud).
 
 ## Fichiers liés
 

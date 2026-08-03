@@ -76,12 +76,12 @@ temperature = 0.4
 max_tokens = 8192
 
 [llm.dev]
-model = "openai/deepseek-coder-v2"
+model = "openai/kimi-k2.7-code"
 temperature = 0.2
 max_tokens = 16384
 
 [llm.leaddev]
-model = "openai/qwen3-235b"
+model = "openai/qwen3.5:397b"
 temperature = 0.1
 max_tokens = 8192
 
