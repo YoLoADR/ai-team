@@ -32,3 +32,4 @@ coverage/
 # Database
 *.db
 *.db-journal
+.playwright-mcp/
