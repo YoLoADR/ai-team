@@ -1,23 +1,37 @@
 import { z } from 'zod';
-import { TASK_PRIORITIES } from './db/schema';
 
-export const taskInsertSchema = z.object({
-  title: z.string().min(1, 'Le titre est requis').max(200),
-  description: z.string().max(2000).optional().default(''),
-  completed: z.boolean().optional().default(false),
-  priority: z.enum(TASK_PRIORITIES).optional().default('medium'),
-  dueDate: z.string().optional(),
-  category: z.string().max(50).optional().default('general'),
+const titleValidator = z.string().superRefine((value, ctx) => {
+  const trimmed = value.trim();
+
+  if (trimmed.length === 0) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'INVALID_TITLE', fatal: true });
+    return;
+  }
+
+  if (trimmed.length > 200) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.too_big,
+      type: 'string',
+      maximum: 200,
+      inclusive: true,
+      message: 'TITLE_TOO_LONG',
+    });
+  }
 });
 
-export const taskUpdateSchema = z.object({
-  title: z.string().min(1).max(200).optional(),
-  description: z.string().max(2000).optional(),
-  completed: z.boolean().optional(),
-  priority: z.enum(TASK_PRIORITIES).optional(),
-  dueDate: z.string().optional(),
-  category: z.string().max(50).optional(),
+export const createTodoSchema = z.object({
+  title: titleValidator,
 });
 
-export type TaskInsert = z.infer<typeof taskInsertSchema>;
-export type TaskUpdate = z.infer<typeof taskUpdateSchema>;
+export type CreateTodoInput = z.infer<typeof createTodoSchema>;
+
+export const updateTodoSchema = z
+  .object({
+    title: titleValidator.optional(),
+    completed: z.boolean().optional(),
+  })
+  .refine((data) => data.title !== undefined || data.completed !== undefined, {
+    message: 'NO_FIELDS_TO_UPDATE',
+  });
+
+export type UpdateTodoInput = z.infer<typeof updateTodoSchema>;

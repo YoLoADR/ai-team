@@ -1,89 +1,80 @@
-import { eq } from 'drizzle-orm';
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/db/client';
-import { tasks } from '@/lib/db/schema';
-import { taskUpdateSchema } from '@/lib/validators';
+import { NextRequest, NextResponse } from 'next/server';
+import { getTodoById, updateTodo, deleteTodo } from '../../../../lib/db/repository';
+import { updateTodoSchema } from '../../../../lib/validators';
+import {
+  errorResponse,
+  parseBody,
+  mapUpdateValidationError,
+  validateId,
+} from '../../../../lib/errors';
 
-interface RouteContext {
-  params: Promise<{ id: string }>;
-}
-
-async function resolveId(context: RouteContext): Promise<{ id: number } | { error: string; status: number }> {
-  const params = await context.params;
-  const rawId = Number(params.id);
-  if (Number.isNaN(rawId)) {
-    return { error: 'ID invalide', status: 400 };
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const idCheck = validateId(params.id);
+  if (!idCheck.ok) {
+    return idCheck.response;
   }
-  return { id: rawId };
-}
 
-export async function GET(_request: Request, context: RouteContext) {
   try {
-    const resolved = await resolveId(context);
-    if ('error' in resolved) {
-      return NextResponse.json({ error: resolved.error }, { status: resolved.status });
+    const todo = getTodoById(idCheck.id);
+    if (!todo) {
+      return errorResponse('TODO_NOT_FOUND', 404);
     }
-
-    const task = db.select().from(tasks).where(eq(tasks.id, resolved.id)).get();
-
-    if (!task) {
-      return NextResponse.json({ error: 'Todo non trouvé' }, { status: 404 });
-    }
-
-    return NextResponse.json(task, { status: 200 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Erreur lors de la récupération du todo' }, { status: 500 });
+    return NextResponse.json(todo);
+  } catch {
+    return errorResponse('DATABASE_ERROR', 500);
   }
 }
 
-export async function PATCH(request: Request, context: RouteContext) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const idCheck = validateId(params.id);
+  if (!idCheck.ok) {
+    return idCheck.response;
+  }
+
+  const parsed = await parseBody(request);
+  if (!parsed.ok) {
+    return errorResponse(parsed.code, parsed.status);
+  }
+
+  const validation = updateTodoSchema.safeParse(parsed.data);
+  if (!validation.success) {
+    const { error, status, message } = mapUpdateValidationError(validation.error.issues);
+    return errorResponse(error, status, message);
+  }
+
   try {
-    const resolved = await resolveId(context);
-    if ('error' in resolved) {
-      return NextResponse.json({ error: resolved.error }, { status: resolved.status });
+    const todo = updateTodo(idCheck.id, validation.data);
+    if (!todo) {
+      return errorResponse('TODO_NOT_FOUND', 404);
     }
-
-    const body = await request.json();
-    const parsed = taskUpdateSchema.safeParse(body);
-
-    if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.errors }, { status: 400 });
-    }
-
-    const existing = db.select().from(tasks).where(eq(tasks.id, resolved.id)).get();
-    if (!existing) {
-      return NextResponse.json({ error: 'Todo non trouvé' }, { status: 404 });
-    }
-
-    const updated = db
-      .update(tasks)
-      .set(parsed.data)
-      .where(eq(tasks.id, resolved.id))
-      .returning()
-      .get();
-
-    return NextResponse.json(updated, { status: 200 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Erreur lors de la mise à jour du todo' }, { status: 500 });
+    return NextResponse.json(todo);
+  } catch {
+    return errorResponse('DATABASE_ERROR', 500);
   }
 }
 
-export async function DELETE(_request: Request, context: RouteContext) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const idCheck = validateId(params.id);
+  if (!idCheck.ok) {
+    return idCheck.response;
+  }
+
   try {
-    const resolved = await resolveId(context);
-    if ('error' in resolved) {
-      return NextResponse.json({ error: resolved.error }, { status: resolved.status });
+    const deleted = deleteTodo(idCheck.id);
+    if (!deleted) {
+      return errorResponse('TODO_NOT_FOUND', 404);
     }
-
-    const existing = db.select().from(tasks).where(eq(tasks.id, resolved.id)).get();
-    if (!existing) {
-      return NextResponse.json({ error: 'Todo non trouvé' }, { status: 404 });
-    }
-
-    db.delete(tasks).where(eq(tasks.id, resolved.id)).run();
-
     return new NextResponse(null, { status: 204 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Erreur lors de la suppression du todo' }, { status: 500 });
+  } catch {
+    return errorResponse('DATABASE_ERROR', 500);
   }
 }

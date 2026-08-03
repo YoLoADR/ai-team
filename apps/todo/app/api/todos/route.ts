@@ -1,34 +1,39 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/db/client';
-import { tasks } from '@/lib/db/schema';
-import { taskInsertSchema } from '@/lib/validators';
+import { NextRequest, NextResponse } from 'next/server';
+import { createTodo, getAllTodos } from '../../../lib/db/repository';
+import { createTodoSchema } from '../../../lib/validators';
+import {
+  errorResponse,
+  parseBody,
+  mapCreateValidationError,
+} from '../../../lib/errors';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const allTasks = db.select().from(tasks).all();
-    return NextResponse.json(allTasks, { status: 200 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Erreur lors de la récupération des todos' }, { status: 500 });
+    const todos = getAllTodos();
+    return NextResponse.json(todos);
+  } catch {
+    return errorResponse('DATABASE_ERROR', 500);
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const parsed = await parseBody(request);
+
+  if (!parsed.ok) {
+    return errorResponse(parsed.code, parsed.status);
+  }
+
+  const validation = createTodoSchema.safeParse(parsed.data);
+
+  if (!validation.success) {
+    const { error, status, message } = mapCreateValidationError(validation.error.issues);
+    return errorResponse(error, status, message);
+  }
+
   try {
-    const body = await request.json();
-    const parsed = taskInsertSchema.safeParse(body);
-
-    if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.errors }, { status: 400 });
-    }
-
-    const inserted = db
-      .insert(tasks)
-      .values(parsed.data)
-      .returning()
-      .get();
-
-    return NextResponse.json(inserted, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Erreur lors de la création du todo' }, { status: 500 });
+    const todo = createTodo(validation.data);
+    return NextResponse.json(todo, { status: 201 });
+  } catch {
+    return errorResponse('DATABASE_ERROR', 500);
   }
 }
