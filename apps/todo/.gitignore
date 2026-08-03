@@ -1,0 +1,9 @@
+node_modules/
+.next/
+todo.db
+todo.db-journal
+todo.db-wal
+coverage/
+.env
+.env.local
+*.log
