@@ -10,11 +10,15 @@
 > TODO du projet à leur place.
 
 ## Phase 0 — Préparation (opérateur)
-- [ ] 0.1 Vérifier repo GitHub `ai-team` (créer si inexistant)
-- [ ] 0.2 Créer GitHub Project V2 Kanban dans `ai-team` (Backlog → Spec Ready → In Progress → In Review → Done)
-- [ ] 0.3 Créer GitHub App `ai-team-loop` + installer sur le repo `ai-team`
-- [ ] 0.4 Configurer secrets GitHub (OLLAMA_CLOUD_API_KEY, GITHUB_APP_PRIVATE_KEY, NETLIFY_AUTH_TOKEN, NETLIFY_SITE_ID)
-- [ ] 0.5 Initialiser Git dans `/Users/yohannravino/Factory/ai-team/` et committer le plan v2
+- [x] 0.1 Vérifier repo GitHub `ai-team` (existant: YoLoADR/ai-team, issues+projects activés)
+  - Preuve : `gh repo view YoLoADR/ai-team` → URL https://github.com/YoLoADR/ai-team
+- [x] 0.2 Créer GitHub Project V2 Kanban (existant: project #3 "AI Team Loop Engineering")
+  - Preuve : champ "Workflow Status" créé avec 5 colonnes (Backlog, Spec Ready, In Progress, In Review, Done)
+  - Field ID: PVTSSF_lAHOAPvD3s4BfO2kzhZjQuc
+- [ ] 0.3 Créer GitHub App `ai-team-loop` + installer sur le repo `ai-team` (INTERVENTION MANUELLE REQUISE)
+- [ ] 0.4 Configurer secrets GitHub (OLLAMA_CLOUD_API_KEY, GITHUB_APP_PRIVATE_KEY, NETLIFY_AUTH_TOKEN, NETLIFY_SITE_ID) (INTERVENTION MANUELLE)
+- [x] 0.5 Initialiser Git dans `/Users/yohannravino/Factory/ai-team/` et committer le plan v2
+  - Preuve : commit ec18341 — `docs: add context.md to v2 plan`
 
 ## Phase 1 — Infrastructure OpenHands (carapace)
 - [ ] 1.1 SSH carapace → créer dossier `/opt/ai-team-loop/`
@@ -24,16 +28,18 @@
 - [ ] 1.5 Configurer les 3 profils LLM (glm-5.2, deepseek-coder-v2, qwen3-235b) via config.toml
 - [ ] 1.6 Configurer les 3 workspaces Docker isolés (po/, dev/, review/)
 - [ ] 1.7 Tester connectivité : prompt simple sur chaque profil (capture résultat)
+- [x] 1.0 Script setup préparé : `infra/openhands-setup.sh` (commit ca60e22)
 
 ## Phase 2 — Scaffold projet Todo Next.js (opérateur)
-- [ ] 2.1 Créer dossier `apps/todo/` + package.json
-- [ ] 2.2 Scaffold Next.js + TypeScript + Tailwind dans `apps/todo/`
-- [ ] 2.3 Configurer Vitest + React Testing Library + MSW dans `apps/todo/`
-- [ ] 2.4 Configurer Drizzle ORM + Better-SQLite3 dans `apps/todo/`
-- [ ] 2.5 Écrire le schéma Drizzle + migration initiale
-- [ ] 2.6 Configurer CI GitHub Actions (lint + typecheck + test)
-- [ ] 2.7 Configurer CD Netlify + `apps/todo/netlify.toml`
-- [ ] 2.8 Vérifier build local et tests passent
+- [x] 2.1 Créer dossier `apps/todo/` + package.json — `apps/todo/package.json` présent
+- [x] 2.2 Scaffold Next.js + TypeScript + Tailwind dans `apps/todo/` — `next.config.mjs`, `tsconfig.json`, `tailwind.config.ts`
+- [x] 2.3 Configurer Vitest + React Testing Library + MSW dans `apps/todo/` — `vitest.config.ts`, `vitest.setup.ts`, smoke test passe
+- [x] 2.4 Configurer Drizzle ORM + Better-SQLite3 dans `apps/todo/` — `drizzle.config.ts`, `lib/db/client.ts`
+- [x] 2.5 Écrire le schéma Drizzle + migration initiale — `lib/db/schema.ts` (table tasks)
+- [x] 2.6 Configurer CI GitHub Actions (lint + typecheck + test) — `.github/workflows/ci.yml`
+- [x] 2.7 Configurer CD Netlify + `apps/todo/netlify.toml` — `.github/workflows/deploy.yml`, `netlify.toml`
+- [x] 2.8 Vérifier build local et tests passent
+  - Preuve : `vitest run` → 2 tests passed ; `tsc --noEmit` → OK ; `next build` → Compiled successfully
 
 ## Phase 3 — Lancement du loop engineering (agents en autonomie)
 - [ ] 3.1 Créer l'issue initiale "Todolist API-first TDD" avec les instructions
