@@ -1,19 +1,9 @@
-import { sql } from 'drizzle-orm';
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
 export const tasks = sqliteTable('tasks', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: text('id').primaryKey().notNull(),
   title: text('title').notNull(),
-  description: text('description').default(''),
-  completed: integer('completed', { mode: 'boolean' }).default(false),
-  priority: text('priority', { enum: ['low', 'medium', 'high'] }).default('medium'),
-  dueDate: text('due_date'),
-  category: text('category').default('general'),
-  createdAt: text('created_at').default(sql`(datetime('now'))`),
-  updatedAt: text('updated_at').default(sql`(datetime('now'))`),
+  completed: integer('completed', { mode: 'boolean' }).notNull().default(false),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
 });
-
-export type Task = typeof tasks.$inferSelect;
-export type NewTask = typeof tasks.$inferInsert;
-
-export const TASK_PRIORITIES = ['low', 'medium', 'high'] as const;
