@@ -63,7 +63,7 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.CARAPACE_SSH_KEY }}" > ~/.ssh/carapace_key
+          echo "${{ secrets.CARAPACE_SSH_KEY_B64 }}" | base64 -d > ~/.ssh/carapace_key
           chmod 600 ~/.ssh/carapace_key
           ssh-keyscan -H ${{ secrets.CARAPACE_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
 
