@@ -71,16 +71,16 @@ jobs:
         if: steps.trigger.outputs.trigger_type == 'po-spec'
         run: |
           ssh -i ~/.ssh/carapace_key -o StrictHostKeyChecking=no ${{ secrets.CARAPACE_USER }}@${{ secrets.CARAPACE_HOST }} \
-            "cd /opt/ai-team-loop && ./trigger-agent.sh po ${{ steps.trigger.outputs.issue_number }} ${{ github.repository }}" 2>&1 || true
+            "cd /opt/ai-team-loop && python3 run-agent.py po ${{ steps.trigger.outputs.issue_number }} ${{ github.repository }}" 2>&1 || true
 
       - name: Trigger Dev Agent (implementation)
         if: steps.trigger.outputs.trigger_type == 'dev-impl'
         run: |
           ssh -i ~/.ssh/carapace_key -o StrictHostKeyChecking=no ${{ secrets.CARAPACE_USER }}@${{ secrets.CARAPACE_HOST }} \
-            "cd /opt/ai-team-loop && ./trigger-agent.sh dev ${{ steps.trigger.outputs.issue_number }} ${{ github.repository }}" 2>&1 || true
+            "cd /opt/ai-team-loop && python3 run-agent.py dev ${{ steps.trigger.outputs.issue_number }} ${{ github.repository }}" 2>&1 || true
 
       - name: Trigger Lead Review Agent (PR review)
         if: steps.trigger.outputs.trigger_type == 'lead-review'
         run: |
           ssh -i ~/.ssh/carapace_key -o StrictHostKeyChecking=no ${{ secrets.CARAPACE_USER }}@${{ secrets.CARAPACE_HOST }} \
-            "cd /opt/ai-team-loop && ./trigger-agent.sh review ${{ steps.trigger.outputs.issue_number }} ${{ github.repository }}" 2>&1 || true
+            "cd /opt/ai-team-loop && python3 run-agent.py review ${{ steps.trigger.outputs.issue_number }} ${{ github.repository }}" 2>&1 || true

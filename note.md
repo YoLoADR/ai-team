@@ -1,3 +1,5 @@
+il manque le raisonnement qui à mener aux choix
+
 Garde ton plan. Utiliser Github Issue en mode Kanban pour le suivi des taches , fix et developpement de feature; je ne veux pas utiliser hydre; uniquement les modèles de mon compte Ollama Cloud.
 
 Je veux qu'on fasse un essaie sur un mini projet Next.js en mode API First avec l'approche TDD;
