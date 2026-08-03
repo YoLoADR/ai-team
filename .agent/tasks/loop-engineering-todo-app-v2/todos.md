@@ -21,13 +21,21 @@
   - Preuve : commit ec18341 — `docs: add context.md to v2 plan`
 
 ## Phase 1 — Infrastructure OpenHands (carapace)
-- [ ] 1.1 SSH carapace → créer dossier `/opt/ai-team-loop/`
-- [ ] 1.2 Vérifier Docker + Docker Compose sur carapace (installer si manquant)
-- [ ] 1.3 Déployer OpenHands runtime (docker-compose.yml)
-- [ ] 1.4 Déployer webhook-adapter (Node.js : GitHub webhook → OpenHands API)
-- [ ] 1.5 Configurer les 3 profils LLM (glm-5.2, deepseek-coder-v2, qwen3-235b) via config.toml
-- [ ] 1.6 Configurer les 3 workspaces Docker isolés (po/, dev/, review/)
-- [ ] 1.7 Tester connectivité : prompt simple sur chaque profil (capture résultat)
+- [x] 1.1 SSH carapace (root@109.199.97.174) → créer dossier `/opt/ai-team-loop/`
+  - Preuve : `ls /opt/ai-team-loop/` → config, docker-compose.yml, webhook-adapter, workspaces
+- [x] 1.2 Vérifier Docker + Docker Compose sur carapace
+  - Preuve : Docker 29.1.3, Docker Compose v5.0.1
+- [x] 1.3 Déployer OpenHands runtime (docker-compose.yml, port 3020)
+  - Preuve : `curl http://localhost:3020/health` → "OK"
+- [x] 1.4 Déployer webhook-adapter (Node.js, port 8095)
+  - Preuve : `docker logs webhook-adapter` → "webhook-adapter listening on :8080"
+- [x] 1.5 Configurer les 3 profils LLM (glm-5.2:cloud, kimi-k2.7-code:cloud, qwen3.5:397b:cloud) via config.toml
+  - Preuve : `cat /opt/ai-team-loop/config/config.toml` → 3 profils configurés
+  - Note : utilise daemon Ollama local (port 11434) qui proxifie vers Ollama Cloud via keypair
+- [x] 1.6 Configurer les 3 workspaces Docker isolés (po/, dev/, review/)
+  - Preuve : volumes `workspace-po`, `workspace-dev`, `workspace-review` créés
+- [x] 1.7 Tester connectivité : prompt simple sur chaque profil
+  - Preuve : glm-5.2:cloud → "PO OK", kimi-k2.7-code:cloud → "DEV OK", qwen3.5:397b:cloud → "REVIEW OK"
 - [x] 1.0 Script setup préparé : `infra/openhands-setup.sh` (commit ca60e22)
 
 ## Phase 2 — Scaffold projet Todo Next.js (opérateur)
