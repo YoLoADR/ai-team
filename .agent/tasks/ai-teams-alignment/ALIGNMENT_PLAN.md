@@ -1,6 +1,7 @@
 # AI Teams Alignment — Plan détaillé
 
 > **Construit avec GLM-5.2** (ollama-cloud/glm-5.2:cloud via opencode) le 2026-08-04.
+> **Mis à jour** le 2026-08-04 — séparation équipes/projets.
 
 ## Vue d'ensemble
 
@@ -10,147 +11,154 @@ Chaque équipe garde son moteur, ses modèles, sa stratégie. L'alignement porte
 2. Des workflows de relay pour que les commentaires (GitHub + Telegram) → agents
 3. Des commandes Telegram préfixées pour s'adresser à la bonne équipe
 4. Des notifications Telegram standardisées
+5. Une séparation propre équipes vs projets (chaque équipe = "usine", chaque projet = "chantier")
 
 ---
 
-## Phase 1 — Standardisation transverse
+## Architecture cible
 
-### 1.1 AGENTS.md pour ai-hirekit (Guyane)
+```
+Factory/
+├── ai-team-cuba/        ← ÉQUIPE (skills, infra, telegram-bot.py, motherboard.yml)
+├── ai-team-haiti/       ← ÉQUIPE (skills, infra, .agent/tasks/)
+├── ai-team-guyane/      ← ÉQUIPE (skills, infra, docs, AGENTS.md, docker-compose)
+├── todo-cuba/           ← PROJET (code Next.js + ci.yml + cuba-loop.yml + motherboard.yml)
+├── todo-haiti/          ← PROJET (code Next.js + ci.yml + haiti-loop.yml + motherboard.yml)
+└── ai-hirekit/          ← PROJET (sites, job.md + guyane-loop.yml + motherboard.yml)
+```
 
-**Fichier** : `/Users/yohannravino/Factory/ai-hirekit/AGENTS.md`
+**Principe** : le workflow loop vit dans le repo projet (c'est là que les events GitHub
+se déclenchent), mais il SSH vers l'infra de l'équipe (carapace/VM 102). L'équipe est
+"l'usine", le projet est le "chantier". Changer l'équipe assignée à un projet = changer
+le workflow qui SSH vers la bonne infra, pas migrer du code.
 
-L'équipe Guyane n'a pas d'AGENTS.md. Les équipes Cuba et Haiti en ont un dans
-`apps/todo/AGENTS.md`. Il faut créer un AGENTS.md racine pour ai-hirekit qui documente :
+### Mapping équipes → projets → workflows
+
+| Équipe | Repo équipe | Moteur | Serveur | Projet | Repo projet | Workflow loop |
+|---|---|---|---|---|---|---|
+| 🇨🇺 Cuba | `ai-team-cuba` | OpenHands | carapace | Todo | `todo-cuba` | `cuba-loop.yml` |
+| 🇭🇹 Haiti | `ai-team-haiti` | Hermes | VM 102 | Todo | `todo-haiti` | `haiti-loop.yml` |
+| 🇬🇫 Guyane | `ai-team-guyane` | Hermes | VM 102 | ai-hirekit | `ai-hirekit` | `guyane-loop.yml` |
+
+---
+
+## Phase 1 — Séparation équipes vs projets
+
+### Raisonnement
+
+Les équipes et leurs projets étaient mélangés dans le même repo. Si Haiti doit
+reprendre le projet de Cuba, Haiti devrait travailler dans un sous-dossier de
+l'équipe Cuba = inacceptable. Séparation propre : 3 équipes + 3 projets au même
+niveau.
+
+### Actions
+
+1. Renommer `YoLoADR/ai-team` → `YoLoADR/ai-team-cuba` (repo équipe Cuba)
+2. Créer `YoLoADR/ai-team-haiti` (repo équipe Haiti, séparé pour éviter conflits)
+3. Créer `YoLoADR/ai-team-guyane` (repo équipe Guyane, extraite de ai-hirekit)
+4. Créer `YoLoADR/todo-cuba` (projet Next.js extrait de ai-team-cuba/apps/todo/)
+5. Créer `YoLoADR/todo-haiti` (projet Next.js extrait de ai-team-haiti/apps/todo/)
+6. Nettoyer ai-hirekit (retirer fichiers équipe, garder seulement projet)
+7. Déplacer les workflows loop vers les repos projets
+8. Copier motherboard.yml dans chaque repo projet
+
+---
+
+## Phase 2 — AGENTS.md
+
+Chaque équipe a un AGENTS.md qui documente :
 - Le rôle de l'opérateur (infrastructure + vérification)
-- La stack (Hermes, Playwright, cookies, A/B testing)
-- Les règles strictes (no secrets, no Claude/GPT, cookies gitignored)
+- La stack et les règles strictes
 - L'isolation (repo séparé, path séparé, profils séparés)
-- Les commandes Telegram (`/guyane-*`)
-
-### 1.2 Commandes Telegram préfixées
-
-**Fichier** : `/Users/yohannravino/Factory/ai-team-cuba/telegram-bot.py`
-
-Renommer les commandes existantes et ajouter les nouvelles :
-
-| Actuel | Nouveau | Équipe | Membre |
-|---|---|---|---|
-| `/po` | `/cuba-po` | Cuba | Yanet |
-| `/dev` | `/cuba-dev` | Cuba | Raúl |
-| `/lead` | `/cuba-lead` | Cuba | Camila |
-| — | `/haiti-po` | Haiti | Jean-Marc |
-| — | `/haiti-dev` | Haiti | Mireille |
-| — | `/haiti-lead` | Haiti | Frantz |
-| — | `/guyane-recon` | Guyane | Léopold |
-| — | `/guyane-poster` | Guyane | Manon |
-| — | `/guyane-review` | Guyane | Sylviane |
-| — | `/teams` | Toutes | Statut global |
-| — | `/motherboard` | Toutes | Lien Kanban |
-
-### 1.3 Notifications Telegram standardisées
-
-Format commun pour toutes les équipes :
-
-```
-[${ÉQUIPE}] ${EMOJI} ${ACTION}
-${DÉTAIL}
-🔗 ${LIEN_GITHUB}
-```
-
-Exemples :
-```
-[cuba] 🔧 PR #6 ouverte — feat: implémente #5
-🔗 https://github.com/YoLoADR/ai-team/pull/6
-
-[haiti] 📋 User story #2 créée — CRUD todos
-🔗 https://github.com/YoLoADR/ai-team/issues/2
-
-[guyane] 📋 Recon #3 terminée — BJemploi
-🔗 https://github.com/YoLoADR/ai-hirekit/issues/3
-```
+- Les commandes Telegram de l'équipe
 
 ---
 
-## Phase 2 — GitHub Kanban + Relay workflows
-
-### 2.1 Motherboard Kanban (Project V2 unifié)
-
-**Fichier** : `/Users/yohannravino/Factory/ai-team-cuba/.github/workflows/motherboard.yml`
-
-Créer un Project V2 "AI Teams Motherboard" sur YoLoADR qui référence les issues
-des 3 équipes. Le workflow ajoute automatiquement les issues au motherboard :
-
-- Issue créée dans `YoLoADR/ai-team-cuba` → tag `cuba` ou `haiti` (selon label)
-- Issue créée dans `YoLoADR/ai-hirekit` → tag `guyane`
-- Colonnes : Backlog → Spec Ready → In Progress → In Review → Done
-- Champ custom : `Équipe` (cuba, haiti, guyane)
-
-Le workflow utilise l'API GraphQL GitHub pour :
-1. Créer le Project V2 s'il n'existe pas
-2. Ajouter les issues au projet
-3. Définir le champ `Équipe`
-4. Déplacer selon le statut
-
-### 2.2 Relay ai-hirekit (cuba-loop.yml pour Guyane)
-
-**Fichier** : `/Users/yohannravino/Factory/ai-hirekit/.github/workflows/guyane-loop.yml`
-
-Relay GitHub Actions pour l'équipe Guyane. Sur événements GitHub → SSH → VM 102 → agent Hermes.
-
-Triggers :
-- `issue_comment.created` : commentaire sur issue → agent recon/poster
-- `issues.labeled` : label ajouté → agent correspondant
-- `pull_request.opened` : PR ouverte → agent review
-- `pull_request_review.submitted` : review soumise → agent fix si CHANGES_REQUESTED
-- `workflow_dispatch` : trigger manuel (`trigger_type`, `issue_number`)
-
-Action :
-- SSH → VM 102 (Precision, 192.168.1.76)
-- Lance l'agent Hermes correspondant au rôle
-- Notifie via Telegram
-
-### 2.3 Relay Haiti (haiti-loop.yml)
-
-**Fichier** : `/Users/yohannravino/Factory/ai-team-cuba/.github/workflows/haiti-loop.yml`
-
-Relay pour l'équipe Haiti (v1, Hermes sur VM 102). Séparé de l'cuba-loop.yml
-existant (qui gère Cuba/v2 sur carapace).
-
-Mêmes triggers que 2.2, mais route vers les profils Hermes v1 sur VM 102 :
-- po-bot → Jean-Marc (minimax-m3:cloud)
-- dev-bot → Mireille (kimi-k2.7-code:cloud)
-- lead-dev-bot → Frantz (deepseek-v4-pro:cloud)
-
----
-
-## Phase 3 — Routage des commentaires (double canal)
+## Phase 3 — Workflows de relay (commentaires → agents)
 
 ### Flux commentaire GitHub → agent
 
 ```
-Tu commentes une issue GitHub
+Tu commentes une issue GitHub dans todo-cuba
   → issue_comment.created event
-  → cuba-loop.yml (ou haiti-loop.yml) détecte
-  → SSH → VM 102 (ou carapace)
-  → agent Hermes (ou OpenHands) traite le commentaire
+  → cuba-loop.yml (dans todo-cuba) détecte
+  → SSH → carapace → Raúl (OpenHands/glm-5.2) traite le commentaire
   → agent répond sur GitHub + notifie Telegram
 ```
 
-### Flux commande Telegram → commentaire GitHub → agent
+### Flux commande Telegram → agent
 
 ```
 Tu envoies /cuba-dev "corrige le bug du filtre" sur Telegram
-  → telegram-bot.py reçoit
+  → telegram-bot.py (sur Contabo) reçoit
   → identifie l'équipe (cuba) et le membre (dev = Raúl)
-  → poste un commentaire sur l'issue GitHub active de l'équipe
-  → cuba-loop.yml détecte le commentaire
   → SSH → carapace → Raúl (glm-5.2) traite
   → répond sur GitHub + notifie Telegram
 ```
 
+### Workflows
+
+| Workflow | Repo | Triggers | SSH vers |
+|---|---|---|---|
+| `cuba-loop.yml` | todo-cuba | issue_comment, issues.labeled, PR opened, review | carapace (OpenHands) |
+| `haiti-loop.yml` | todo-haiti | issue_comment, issues.labeled, PR opened, review | VM 102 (Hermes v1) |
+| `guyane-loop.yml` | ai-hirekit | issue_comment, issues.labeled, PR opened, review | VM 102 (Hermes hirekit) |
+| `motherboard.yml` | chaque repo projet | issues.opened, PR opened | GraphQL GitHub API |
+
 ---
 
-## Infrastructure concernée
+## Phase 4 — Kanban motherboard (Project V2 unifié)
+
+Un Project V2 "AI Teams" sur GitHub qui agrège les issues des 3 repos projets.
+
+- Colonnes : Backlog → Spec Ready → In Progress → In Review → Done
+- Champ custom `Équipe` : cuba, haiti, guyane
+- `motherboard.yml` dans chaque repo projet ajoute les issues au Project V2
+- Mapping simplifié : 1 repo projet = 1 équipe (pas de devinette via labels)
+
+---
+
+## Phase 5 — Telegram
+
+### Commandes préfixées
+
+| Commande | Équipe | Membre |
+|---|---|---|
+| `/cuba-po <msg>` | Cuba | Yanet (PO) |
+| `/cuba-dev <msg>` | Cuba | Raúl (Dev) |
+| `/cuba-lead <msg>` | Cuba | Camila (Lead) |
+| `/haiti-po <msg>` | Haiti | Jean-Marc (PO) |
+| `/haiti-dev <msg>` | Haiti | Mireille (Dev) |
+| `/haiti-lead <msg>` | Haiti | Frantz (Lead) |
+| `/guyane-recon <msg>` | Guyane | Léopold (Recon) |
+| `/guyane-poster <msg>` | Guyane | Manon (Poster) |
+| `/guyane-review <msg>` | Guyane | Sylviane (Review) |
+| `/teams` | Toutes | Statut global |
+| `/motherboard` | Toutes | Lien Kanban |
+
+### Notifications standardisées
+
+Format : `[équipe] [emoji] [action] — [détail]`
+
+```
+[cuba] 🔧 PR #6 ouverte — feat: implémente #5
+[haiti] 📋 User story #2 créée — CRUD todos
+[guyane] 🔍 Recon #3 terminée — BJemploi
+```
+
+---
+
+## Phase 6 — Déploiement et tests
+
+1. Configurer les secrets GitHub (VM102_SSH_KEY_B64, MOTHERBOARD_*, TELEGRAM_*)
+2. Déployer telegram-bot.py sur Contabo (scp + restart service)
+3. Créer une issue de test dans chaque repo projet → vérifier le relay
+4. Vérifier le motherboard (issue visible dans le Project V2 ?)
+5. Tester une commande Telegram → vérifier le relay
+
+---
+
+## Infrastructure
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -161,13 +169,13 @@ Tu envoies /cuba-dev "corrige le bug du filtre" sur Telegram
                ▼                      ▼              ▼
 ┌──────────────────────┐ ┌──────────────────────┐ ┌──────────────────────┐
 │   Telegram Gateway   │ │   GitHub (Cloud)     │ │   Ollama Cloud       │
-│   Contabo 100.98...  │ │   YoLoADR/ai-team-cuba   │ │   $20/mo Pro         │
-│   @loop_engineering  │ │   YoLoADR/ai-hirekit│ │   glm-5.2, kimi,     │
-│   _team_bot          │ │   Motherboard V2    │ │   deepseek, minimax  │
-│   (cuba/haiti/guyane)│ │   (Kanban unifié)   │ │   qwen3.5:397b       │
+│   Contabo 100.98...  │ │   6 repos:           │ │   $20/mo Pro         │
+│   @loop_engineering  │ │   3 équipes + 3 proj │ │   glm-5.2, kimi,     │
+│   _team_bot          │ │   Motherboard V2     │ │   deepseek, minimax  │
+│   (cuba/haiti/guyane)│ │                      │ │   qwen3.5:397b       │
 └──────────┬───────────┘ └──────────┬───────────┘ └──────────┬───────────┘
            │ SSH                    │ GitHub Actions         │ API
-           ▼                        │ (relay workflows)      │
+           ▼                        │ (loop workflows)       │
 ┌────────────────────────────────────────────────────────────┼──────────┐
 │              Precision Proxmox (100.111.21.3)              │          │
 │  ┌──────────────────────────────────────────────────────┐  │          │
@@ -185,7 +193,7 @@ Tu envoies /cuba-dev "corrige le bug du filtre" sur Telegram
 └────────────────────────────────────────────────────────────┘          │
 ┌───────────────────────────────────────────────────────────────────────┘
 │
-└── Netlify (ai-team-todo.netlify.app) — Cuba uniquement
+└── Netlify (todo-cuba.netlify.app) — Cuba uniquement
 ```
 
 ---
@@ -197,14 +205,3 @@ Aucun coût supplémentaire. L'infrastructure existante suffit :
 - Contabo + Precision : existing hardware
 - GitHub Actions : gratuit (public repos)
 - Telegram : gratuit
-
----
-
-## Risques
-
-| Risque | Mitigation |
-|---|---|
-| Collision de commandes Telegram (anciennes vs nouvelles) | Garder les anciennes commandes comme alias pendant transition |
-| Motherboard V2 trop complexe à maintenir | Utiliser un seul workflow GitHub Actions, pas de sync bidirectionnelle |
-| Relay SSH vers VM 102 déjà utilisé par ai-team v2 | Profils Hermes séparés, paths séparés, pas de conflit |
-| Commentaires GitHub qui déclenchent l'agent trop souvent | Filtrer par auteur (ignorer les commentaires des bots eux-mêmes) |

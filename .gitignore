@@ -33,3 +33,11 @@ coverage/
 *.db
 *.db-journal
 .playwright-mcp/
+.ruff_cache/
+.serena/
+.opencode-edits.log
+.claude/
+.pi/
+
+# Apps (projets séparés — ne plus rien tracker ici)
+apps/
