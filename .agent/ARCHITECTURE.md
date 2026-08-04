@@ -1,12 +1,53 @@
-# Architecture — Loop Engineering (ai-team)
+# Architecture — Loop Engineering (Équipe Cuba 🇨🇺)
 
 > **Construit avec DeepSeek** (ollama-cloud/glm-5.2:cloud via opencode) le 2026-08-03.
+> **Mis à jour** le 2026-08-04 — alignement Caraïbes + séparation équipes/projets.
 
 ## Vue d'ensemble
 
 Le **loop engineering** est un workflow où 3 bots IA collaborent pour développer
 une application : un **Product Owner** (planifie), un **Developer** (implémente),
 et un **Lead Developer** (review et merge).
+
+L'équipe fait partie du programme **AI Teams Caraïbes** — 3 équipes indépendantes
+qui partagent l'infrastructure mais gardent chacune son moteur, ses modèles et
+sa stratégie.
+
+### Programme AI Teams Caraïbes
+
+| Équipe | Repo équipe | Moteur | Serveur | Projet | Repo projet |
+|---|---|---|---|---|---|
+| 🇨🇺 **Cuba** | `YoLoADR/ai-team-cuba` | OpenHands | carapace (109.199.97.174) | Todo | `YoLoADR/todo-cuba` |
+| 🇭🇹 **Haiti** | `YoLoADR/ai-team-haiti` | Hermes v0.19.0 | Precision VM 102 | Todo | `YoLoADR/todo-haiti` |
+| 🇬🇫 **Guyane** | `YoLoADR/ai-team-guyane` | Hermes v0.19.0 | Precision VM 102 | ai-hirekit | `YoLoADR/ai-hirekit` |
+
+**Principe** : le workflow loop vit dans le repo projet (c'est là que les events
+GitHub se déclenchent), mais il SSH vers l'infra de l'équipe. L'équipe est "l'usine",
+le projet est le "chantier". Changer l'équipe assignée à un projet = changer le
+workflow qui SSH vers la bonne infra, pas migrer du code.
+
+### Membres de l'équipe Cuba
+
+| Rôle | Prénom | Modèle Ollama Cloud |
+|---|---|---|
+| Product Owner | **Yanet** | `glm-5.2:cloud` |
+| Developer | **Raúl** | `glm-5.2:cloud` |
+| Lead Developer | **Camila** | `qwen3.5:397b:cloud` |
+
+### Kanban motherboard
+
+Un Project V2 "AI Teams Motherboard" (GitHub Project #4) agrège les issues des
+3 équipes avec un champ custom `Équipe` (🇨🇺 Cuba, 🇭🇹 Haiti, 🇬🇫 Guyane).
+URL : https://github.com/users/YoLoADR/projects/4
+
+### Telegram
+
+Le bot Telegram `@loop_engineering_team_bot` (sur Contabo) route les commandes
+préfixées par équipe :
+- `/cuba_po`, `/cuba_dev`, `/cuba_lead` → Yanet, Raúl, Camila (SSH carapace)
+- `/haiti_po`, `/haiti_dev`, `/haiti_lead` → Jean-Marc, Mireille, Frantz (SSH VM 102)
+- `/guyane_recon`, `/guyane_poster`, `/guyane_review` → Léopold, Manon, Sylviane (SSH VM 102)
+- `/teams` → statut global, `/motherboard` → lien Kanban
 
 ## Composants
 

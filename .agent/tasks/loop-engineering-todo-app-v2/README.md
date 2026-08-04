@@ -1,5 +1,28 @@
 # Loop Engineering — README
 
+> **Équipe Cuba 🇨🇺** (OpenHands, carapace) — Construit avec DeepSeek (glm-5.2).
+> **Mis à jour** le 2026-08-04 — alignement Caraïbes + séparation équipes/projets.
+
+## Alignement Caraïbes
+
+Cuba fait partie du programme **AI Teams Caraïbes** — 3 équipes indépendantes
+qui partagent l'infrastructure mais gardent chacune son moteur et ses modèles.
+
+| Équipe | Moteur | Modèles | Projet |
+|---|---|---|---|
+| 🇨🇺 **Cuba** (cette équipe) | OpenHands | glm-5.2 + qwen3.5:397b | `YoLoADR/todo-cuba` |
+| 🇭🇹 Haiti | Hermes | minimax + kimi + deepseek | `YoLoADR/todo-haiti` |
+| 🇬🇫 Guyane | Hermes | 4 modèles A/B | `YoLoADR/ai-hirekit` |
+
+**Séparation équipes/projets** : le code Next.js vit dans `YoLoADR/todo-cuba`
+(séparé du repo équipe `ai-team-cuba`). Le workflow `cuba-loop.yml` est dans le
+repo projet et SSH vers carapace pour déclencher les agents.
+
+**Motherboard** : https://github.com/users/YoLoADR/projects/4 — Project V2 unifié
+avec champ `Équipe` pour filtrer par équipe.
+
+**Telegram** : `/cuba_po`, `/cuba_dev`, `/cuba_lead` pour s'adresser à Cuba.
+
 ## En une phrase
 
 Une équipe de 3 bots IA (PO, Dev, Lead-Review) qui planifient, développent et

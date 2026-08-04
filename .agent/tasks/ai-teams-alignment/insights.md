@@ -149,3 +149,95 @@ Factory/
 5. Déployer telegram-bot.py sur Contabo
 6. Tester : créer une issue dans chaque repo projet + vérifier le relay
 7. Mettre à jour ARCHITECTURE.md et les README avec les nouveaux noms
+
+---
+
+## Session 3 — Déploiement et tests
+
+### Push des 6 repos sur GitHub
+
+Tous les repos ont été poussés avec succès :
+- `ai-team-cuba` — 3 commits (rename, cleanup, docs)
+- `ai-team-haiti` — 2 commits (init, cleanup)
+- `ai-team-guyane` — 1 commit (init, extrait de ai-hirekit)
+- `todo-cuba` — 3 commits (init, fix motherboard x2)
+- `todo-haiti` — 3 commits (init, fix motherboard x2)
+- `ai-hirekit` — 3 commits (cleanup, fix motherboard x2)
+
+### Création du Project V2 "AI Teams Motherboard"
+
+- Project #4 créé sur GitHub via Playwright (template Kanban)
+- Renommé via GraphQL API : `updateProjectV2` mutation
+- Colonnes : Backlog → Ready → In progress → In review → Done
+- Champ custom "Équipe" créé via GraphQL avec 3 options :
+  - 🇨🇺 Cuba (option ID: `0e1df621`, color: BLUE)
+  - 🇭🇹 Haiti (option ID: `5ea48213`, color: GREEN)
+  - 🇬🇫 Guyane (option ID: `9bd60494`, color: YELLOW)
+
+### IDs GraphQL récupérés
+
+| Secret | Valeur |
+|---|---|
+| `MOTHERBOARD_PROJECT_ID` | `PVT_kwHOAPvD3s4BfU1R` |
+| `MOTHERBOARD_STATUS_FIELD_ID` | `PVTSSF_lAHOAPvD3s4BfU1RzhZogjk` |
+| `MOTHERBOARD_TEAM_FIELD_ID` | `PVTSSF_lAHOAPvD3s4BfU1RzhZohIU` |
+
+### Secrets GitHub configurés
+
+Configurés sur les 3 repos projets (todo-cuba, todo-haiti, ai-hirekit) :
+- `MOTHERBOARD_PROJECT_ID`, `MOTHERBOARD_STATUS_FIELD_ID`, `MOTHERBOARD_TEAM_FIELD_ID`
+- `MOTHERBOARD_PAT` (token avec projects:write)
+- `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`
+- `VM102_SSH_KEY_B64` (sur todo-haiti et ai-hirekit)
+- `CARAPACE_SSH_KEY_B64`, `CARAPACE_HOST`, `CARAPACE_USER` (sur todo-cuba)
+
+### Déploiement du bot Telegram sur Contabo
+
+1. `scp telegram-bot.py root@109.199.97.174:/opt/telegram-bot.py`
+2. `pip3 install --break-system-packages python-telegram-bot==22.0`
+3. Création du service systemd `/etc/systemd/system/loop-engineering-bot.service`
+4. `systemctl enable + start loop-engineering-bot`
+5. Statut : `active (running)`, `getMe` → 200 OK, `Application started`
+
+### Bugs corrigés pendant le déploiement
+
+1. **`permissions: projects: write` invalide** — cette permission n'existe pas dans
+   GitHub Actions. Retirée du motherboard.yml. Le PAT gère l'auth Project V2.
+
+2. **`ProjectV2FieldValue!` type mismatch** — la mutation GraphQL attend un objet
+   `ProjectV2FieldValue` mais on passait une string comme variable. Solution : inliner
+   l'option ID directement dans la mutation (`singleSelectOptionId: "${teamOptId}"`).
+
+3. **`COLUMN_OPTIONS` déclaré 2 fois** — l'ancienne déclaration avec placeholders
+   (`BACKLOG_OPTION_ID`, etc.) n'avait pas été supprimée. Doublon retiré.
+
+4. **Tirets dans les commandes Telegram** — `python-telegram-bot` n'accepte pas les
+   tirets dans les noms de commandes (`cuba-po` → erreur `not a valid bot command`).
+   Remplacés par des underscores : `cuba_po`, `haiti_dev`, `guyane_recon`.
+
+5. **`python-telegram-bot` non installé sur Contabo** — `pip3 install` refusé par
+   PEP 668. Contourné avec `--break-system-packages`.
+
+6. **Service systemd manquant** — le bot n'était pas déployé comme service. Créé
+   `/etc/systemd/system/loop-engineering-bot.service` avec restart=always.
+
+### Tests de validation
+
+| Test | Résultat | Preuve |
+|---|---|---|
+| Issue sur todo-cuba | ✅ Cuba Loop success (9s) | `gh run list` |
+| Issue sur todo-haiti | ✅ Haiti Loop in_progress | `gh run list` |
+| Motherboard sync todo-cuba#3 | ✅ Équipe=🇨🇺 Cuba, Status=Backlog | `gh api graphql` |
+| Motherboard sync todo-haiti#2 | ✅ Status=Backlog | `gh api graphql` |
+| Bot Telegram actif | ✅ active (running) | `systemctl status` |
+
+### Découvertes session 3
+
+- L'UI GitHub pour créer un Project V2 ne sauvegarde pas toujours le nom — GraphQL
+  est plus fiable (`updateProjectV2` mutation)
+- La mutation `updateProjectV2ItemFieldValue` ne peut pas recevoir l'option ID via
+  une variable typée `ProjectV2FieldValue!` — il faut inliner la valeur
+- Les workflows GitHub Actions ne se déclenchent pas si le fichier a des erreurs de
+  syntaxe YAML (même `permissions` invalide bloque tout)
+- Le `GITHUB_TOKEN` par défaut n'a pas accès aux Projects V2 cross-repo — il faut
+  un PAT avec `projects:write`
