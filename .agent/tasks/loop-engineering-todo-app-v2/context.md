@@ -20,8 +20,8 @@ nécessaires pour mettre en place l'environnement des agents.
 | Aspect | v1 (existant) | v2 (ce plan) |
 |---|---|---|
 | LLM PO | kimi-k2.6 | glm-5.2 (Ollama Cloud) |
-| LLM Dev | deepseek-v4-pro | kimi-k2.7-code (Ollama Cloud) |
-| LLM Lead-Review | deepseek-v4-pro | qwen3.5:397b (Ollama Cloud) |
+| LLM Dev | deepseek-v4-pro | glm-5.2 (Ollama Cloud) — kimi-k2.7-code abandonné (trop lent 5-10min) |
+| LLM Lead-Review | deepseek-v4-pro | qwen3.5:397b (Ollama Cloud) — qwen3-235b indisponible |
 | Hébergement | Precision (conflit cubes sellers) | VPS Contabo « carapace » (lab+staging) |
 | Stockage | Turso | SQLite local (Better-SQLite3) |
 | Scope | 3 issues figées | 5 user stories décidées par le PO-bot |
@@ -57,8 +57,8 @@ nécessaires pour mettre en place l'environnement des agents.
 | Kanban | GitHub Project V2 |
 | Orchestration bots | OpenHands runtime self-hosted (Docker sur carapace) |
 | LLM PO | glm-5.2 (Ollama Cloud) |
-| LLM Dev | glm-5.2 (Ollama Cloud) — kimi-k2.7-code abandonné (trop lent 5-10min) |
-| LLM Lead Dev | qwen3.5:397b (Ollama Cloud, prompt review) |
+| LLM Dev | glm-5.2 (Ollama Cloud) — kimi-k2.7-code abandonné (trop lent 5-10min, timeout GitHub Actions 30min) |
+| LLM Lead Dev | qwen3.5:397b (Ollama Cloud) — qwen3-235b indisponible, qwen3.5:397b est le plus gros Qwen3 dispo |
 
 ## Architecture cible
 
@@ -80,13 +80,12 @@ VPS Contabo « carapace » (109.199.97.174)
     ├── openhands-runtime                   # OpenHands headless (port 3000)
     ├── webhook-adapter                     # Node.js : GitHub webhook → OpenHands API
     ├── workspace-po                        # Volume isolé PO (glm-5.2)
-    ├── workspace-dev                       # Volume isolé Dev (kimi-k2.7-code)
+    ├── workspace-dev                       # Volume isolé Dev (glm-5.2)
     └── workspace-review                    # Volume isolé Lead-Review (qwen3.5:397b)
 
 Ollama Cloud (https://ollama.com/api/v1)
-├── glm-5.2            → PO (rédaction user stories Gherkin)
-├── kimi-k2.7-code  → Dev (code TDD)
-└── qwen3.5:397b         → Lead-Review (analyse de diff, commentaires inline)
+├── glm-5.2            → PO + Dev (rédaction user stories Gherkin + code TDD)
+└── qwen3.5:397b       → Lead-Review (analyse de diff, commentaires inline)
 
 GitHub
 ├── Repo: yohannravino/ai-team (créé par script setup)
@@ -111,18 +110,23 @@ Netlify
    → commit spec.md sur branche ai/spec/#{issue}
    → commente sur l'issue → move → "Spec Ready"
    ↓
-3. Dev-bot (kimi-k2.7-code) lit la spec
+3. Dev-bot (glm-5.2) lit la spec
    → écrit les tests d'abord (red phase)
    → implémente (green phase)
-   → lance CI locale (lint + typecheck + test)
+   → lance CI locale (tsc + vitest)
+   → si CI échoue → auto-fix via LLM → re-valide
    → push sur branche ai/impl/#{issue} → ouvre PR
-   → move → "In Review"
+   → move → "In Progress" → Telegram notifie 🔧
    ↓
 4. Lead-Review-bot (qwen3.5:397b) récupère le diff
    → analyse : qualité, couverture tests, conformité spec, sécurité, perf
    → poste review avec commentaires inline
-   ├── APPROVE → merge auto → move "Done" → déclenche CD Netlify
-   └── REQUEST_CHANGES → commentaires actionnables → move "In Progress" → Dev reprend
+   → Telegram notifie 👁
+   ├── APPROVE → merge auto → move "Done" → Telegram notifie 🎉
+   └── REQUEST_CHANGES → Telegram notifie ⚠️
+       → pull_request_review event → Dev-fix automatique
+       → Dev-fix lit reviews, corrige, CI locale, push → Telegram notifie ✅
+       → Lead-Review re-review → loop jusqu'à APPROVE
 ```
 
 ## Règles dures
@@ -134,7 +138,8 @@ Netlify
 - ✅ Lead Dev doit donner des commentaires actionnables, pas seulement un "LGTM".
 - ✅ La TODO du projet todolist est gérée par les agents (PO/Dev/Lead), pas par l'opérateur.
 - 🚫 Pas d'utilisation d'Hydre : tout tourne sur carapace et Ollama Cloud.
-- 🚫 Pas de Claude/GPT : seuls glm-5.2, kimi-k2.7-code, qwen3.5:397b (Ollama Cloud).
+- 🚫 Pas de Claude/GPT : seuls glm-5.2 (PO+Dev), qwen3.5:397b (Lead-Review) via Ollama Cloud.
+- 🚫 Pas de kimi-k2.7-code:cloud pour le Dev (trop lent 5-10min, timeout GitHub Actions).
 
 ## Fichiers liés
 

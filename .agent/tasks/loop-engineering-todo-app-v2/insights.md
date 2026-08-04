@@ -112,3 +112,74 @@ en TDD, avec déploiement Netlify.
 - La review automatique par qwen3.5:397b pourrait manquer de nuance. À itérer.
 - Le déploiement Netlify d'une app Next.js avec routes API + SQLite doit être validé
   (variables d'environnement, cold starts) — basculer vers Turso en prod.
+- La qualité du code généré par glm-5.2:cloud (Dev) n'est pas optimale (CI échoue
+  souvent). L'auto-fix aide mais ne résout pas tout. Itérer sur le prompt système.
+
+## Raisonnement complet des décisions (session 2026-08-03/04)
+
+### Hermes vs OpenHands vs stack maison
+
+- **Hermes** : agent mono-utilisateur avec auto-apprentissage de skills. Pas un
+  workflow multi-agent. Abandonné.
+- **OpenHands** : supporte multi-agent, GitHub Actions, endpoint OpenAI-compatible.
+  Déployé sur carapace (port 3020). En pratique, sert juste d'UI de monitoring.
+- **Stack maison** (choisie) : `run-agent.py` (Python) + GitHub Actions relay SSH.
+  Plus léger, plus contrôlable, aucune dépendance framework.
+
+### Méthode d'accès Ollama Cloud
+
+Découverte clé : pas besoin de clé API. Le daemon Ollama local sur carapace
+(port 11434) proxifie les modèles `:cloud` vers Ollama Cloud via **keypair**
+(même méthode que `ollama signin` sur les VPS). Testé : `curl localhost:11434/api/chat`
+avec `model: "glm-5.2:cloud"` → fonctionne sans clé API.
+
+### Port 8095 inaccessible → GitHub Actions relay
+
+- carapace a un pare-feu Contabo qui bloque tous les ports sauf 22 (SSH)
+- iptables ouvert pour 8095 mais Contabo bloque au niveau réseau
+- Nginx en mode stream (SNI) — pas de location block possible
+- Solution : GitHub Actions workflow SSH vers carapace → `run-agent.py`
+- Aucun port à ouvrir, utilise SSH (port 22) déjà ouvert
+- Inconvénient : les events générés par la GitHub App ne déclenchent pas de workflow
+  (GitHub ignore les events de l'App elle-même). Le Lead-Review doit être déclenché
+  manuellement ou via `workflow_dispatch`.
+
+### GitHub App ne peut pas reviewer ses propres PRs
+
+- Erreur 422 : "Review Can not request changes on your own pull request"
+- La GitHub App crée les PRs (Dev-bot) → ne peut pas les reviewer (Lead-Review)
+- Solution : le Lead-Review utilise un PAT (Personal Access Token) de l'utilisateur
+  pour poster les reviews. Stocké en secret `LEAD_REVIEW_PAT` + `.env` carapace.
+
+### Push protection GitHub bloque le token OAuth
+
+- Un script `delegate.sh` contenait un token OAuth GitHub en clair
+- GitHub push protection a bloqué le push
+- Solution : `git rebase -i` pour supprimer le commit contenant le secret
+- Le fichier a été supprimé du repo
+
+### Évolution du script run-agent.py
+
+1. **v1 Bash** (`trigger-agent.sh`) : PO postait en commentaire (pas de PR). Dev postait
+   le code en commentaire (pas de PR). Limité.
+2. **v2 Python** (`run-agent.py`) : Dev clone le repo, crée branche, écrit fichiers,
+   push, ouvre PR. Lead-Review récupère le diff réel, analyse, poste review.
+3. **v3 Python** (actuelle) : ajout dev-fix (lit reviews, corrige, push), CI locale
+   (tsc + vitest), Kanban auto (GraphQL), notifications Telegram.
+
+### Tests du loop complet
+
+| Test | Issue | PO | Dev | Review | Dev-fix | Durée totale |
+|---|---|---|---|---|---|---|
+| #1 (kimi) | #1 | ✅ 9538 chars | ✅ 12 fichiers PR #4 | ✅ CHANGES_REQUESTED | ❌ pas testé | ~20 min |
+| #2 (glm) | #5 | ✅ 10401 chars | ✅ 15 fichiers PR #6 | ✅ CHANGES_REQUESTED | ✅ 3 min | ~15 min |
+
+### Notifications Telegram
+
+- Bot `@loop_engineering_team_bot` créé via BotFather (Playwright sur Telegram web)
+- User ID récupéré via @userinfobot (7211240214)
+- `send_telegram()` dans `run-agent.py` : notifie à chaque événement
+- Première notification testée manuellement depuis carapace → reçu sur Telegram ✅
+- Notifications automatiques testées : PO spec ✅, Review ✅ (Telegram notifié)
+- Note : certaines notifications Telegram échouent (400) quand le message contient des
+  caractères Markdown non échappés. À corriger.
