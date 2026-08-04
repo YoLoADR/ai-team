@@ -1,89 +1,62 @@
-import { eq } from 'drizzle-orm';
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/db/client';
-import { tasks } from '@/lib/db/schema';
-import { taskUpdateSchema } from '@/lib/validators';
+import { NextRequest } from 'next/server';
+import { todoRepository } from '../../../../lib/repositories/todo-repository';
+import { validateUpdateTodo } from '../../../../lib/validators';
+import { successResponse, errorResponse } from '../../../../lib/api-utils';
+import { ValidationError, NotFoundError } from '../../../../lib/errors';
 
-interface RouteContext {
-  params: Promise<{ id: string }>;
-}
-
-async function resolveId(context: RouteContext): Promise<{ id: number } | { error: string; status: number }> {
-  const params = await context.params;
-  const rawId = Number(params.id);
-  if (Number.isNaN(rawId)) {
-    return { error: 'ID invalide', status: 400 };
-  }
-  return { id: rawId };
-}
-
-export async function GET(_request: Request, context: RouteContext) {
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const resolved = await resolveId(context);
-    if ('error' in resolved) {
-      return NextResponse.json({ error: resolved.error }, { status: resolved.status });
+    const id = parseInt(params.id, 10);
+    if (isNaN(id)) {
+      throw new ValidationError('Invalid id parameter');
     }
 
-    const task = db.select().from(tasks).where(eq(tasks.id, resolved.id)).get();
-
-    if (!task) {
-      return NextResponse.json({ error: 'Todo non trouvé' }, { status: 404 });
+    const todo = todoRepository.findById(id);
+    if (!todo) {
+      throw new NotFoundError(`Todo with id ${id} not found`);
     }
 
-    return NextResponse.json(task, { status: 200 });
+    return successResponse(todo);
   } catch (error) {
-    return NextResponse.json({ error: 'Erreur lors de la récupération du todo' }, { status: 500 });
+    return errorResponse(error);
   }
 }
 
-export async function PATCH(request: Request, context: RouteContext) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const resolved = await resolveId(context);
-    if ('error' in resolved) {
-      return NextResponse.json({ error: resolved.error }, { status: resolved.status });
+    const id = parseInt(params.id, 10);
+    if (isNaN(id)) {
+      throw new ValidationError('Invalid id parameter');
     }
 
     const body = await request.json();
-    const parsed = taskUpdateSchema.safeParse(body);
-
-    if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.errors }, { status: 400 });
-    }
-
-    const existing = db.select().from(tasks).where(eq(tasks.id, resolved.id)).get();
-    if (!existing) {
-      return NextResponse.json({ error: 'Todo non trouvé' }, { status: 404 });
-    }
-
-    const updated = db
-      .update(tasks)
-      .set(parsed.data)
-      .where(eq(tasks.id, resolved.id))
-      .returning()
-      .get();
-
-    return NextResponse.json(updated, { status: 200 });
+    const validated = validateUpdateTodo(body);
+    const todo = todoRepository.update(id, validated);
+    return successResponse(todo);
   } catch (error) {
-    return NextResponse.json({ error: 'Erreur lors de la mise à jour du todo' }, { status: 500 });
+    return errorResponse(error);
   }
 }
 
-export async function DELETE(_request: Request, context: RouteContext) {
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const resolved = await resolveId(context);
-    if ('error' in resolved) {
-      return NextResponse.json({ error: resolved.error }, { status: resolved.status });
+    const id = parseInt(params.id, 10);
+    if (isNaN(id)) {
+      throw new ValidationError('Invalid id parameter');
     }
 
-    const existing = db.select().from(tasks).where(eq(tasks.id, resolved.id)).get();
-    if (!existing) {
-      return NextResponse.json({ error: 'Todo non trouvé' }, { status: 404 });
-    }
-
-    db.delete(tasks).where(eq(tasks.id, resolved.id)).run();
-
-    return new NextResponse(null, { status: 204 });
+    todoRepository.delete(id);
+    return successResponse({ success: true });
   } catch (error) {
-    return NextResponse.json({ error: 'Erreur lors de la suppression du todo' }, { status: 500 });
+    return errorResponse(error);
   }
 }

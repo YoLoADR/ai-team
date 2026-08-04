@@ -1,23 +1,29 @@
 import { z } from 'zod';
-import { TASK_PRIORITIES } from './db/schema';
 
-export const taskInsertSchema = z.object({
-  title: z.string().min(1, 'Le titre est requis').max(200),
-  description: z.string().max(2000).optional().default(''),
+export const createTodoSchema = z.object({
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(255, 'Title must be 255 characters or less'),
   completed: z.boolean().optional().default(false),
-  priority: z.enum(TASK_PRIORITIES).optional().default('medium'),
-  dueDate: z.string().optional(),
-  category: z.string().max(50).optional().default('general'),
 });
 
-export const taskUpdateSchema = z.object({
-  title: z.string().min(1).max(200).optional(),
-  description: z.string().max(2000).optional(),
+export const updateTodoSchema = z.object({
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(255, 'Title must be 255 characters or less')
+    .optional(),
   completed: z.boolean().optional(),
-  priority: z.enum(TASK_PRIORITIES).optional(),
-  dueDate: z.string().optional(),
-  category: z.string().max(50).optional(),
 });
 
-export type TaskInsert = z.infer<typeof taskInsertSchema>;
-export type TaskUpdate = z.infer<typeof taskUpdateSchema>;
+export type CreateTodoInput = z.infer<typeof createTodoSchema>;
+export type UpdateTodoInput = z.infer<typeof updateTodoSchema>;
+
+export function validateCreateTodo(data: unknown): CreateTodoInput {
+  return createTodoSchema.parse(data);
+}
+
+export function validateUpdateTodo(data: unknown): UpdateTodoInput {
+  return updateTodoSchema.parse(data);
+}
