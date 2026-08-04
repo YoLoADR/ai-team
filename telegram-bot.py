@@ -47,7 +47,7 @@ TEAMS = {
         },
     },
     "guyane": {
-        "name": "🇬🇫 Guyane (ai-hirekit — Hermes)",
+        "name": "🇬🇫 Guyane (Hermes, VM 102 — projet: ai-hirekit)",
         "server": "vm102",
         "members": {
             "recon": ("Léopold", "glm-5.2:cloud", "Recon Agent"),
@@ -280,7 +280,7 @@ async def send_to_hermes_bot(team_key, role, message, update):
         profile = f"{role}-bot"  # po-bot, dev-bot, lead-dev-bot
         project_path = "/home/hermes/repo"
     elif team_key == "guyane":
-        profile = f"{role}-bot"  # recon-bot, poster-bot, review-bot
+        profile = f"guyane-{role}-bot"  # guyane-recon-bot, guyane-poster-bot, guyane-review-bot
         project_path = "/home/hermes/projects/ai-hirekit"
     else:
         return
