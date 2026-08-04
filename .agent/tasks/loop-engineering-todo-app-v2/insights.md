@@ -12,7 +12,6 @@ en TDD, avec déploiement Netlify.
 ## Décisions clés de la session
 
 1. **Orchestration** : OpenHands runtime self-hosted sur VPS Contabo « carapace »
-   - Hermes est un agent mono-utilisateur avec auto-apprentissage de skills, pas un
      workflow multi-agent PO→Dev→LeadDev.
    - OpenHands supporte nativement le multi-agent, les automations GitHub, et
      l'isolation par workspaces Docker.
@@ -21,7 +20,7 @@ en TDD, avec déploiement Netlify.
 
 2. **LLM** : Ollama Cloud Pro ($20/mo)
    - **PO** : `glm-5.2` (modèle actuel de l'opérateur, bon en rédaction)
-   - **Dev** : `kimi-k2.7-code` (spécialisé code)
+   - **Dev** : `glm-5.2 (Dev)` (spécialisé code)
    - **Lead Dev** : `qwen3.5:397b` (excellent en raisonnement analytique, review de diff)
    - Ollama Cloud est OpenAI-compatible via `https://ollama.com/api/v1`.
 
@@ -60,7 +59,7 @@ en TDD, avec déploiement Netlify.
 | Modèle | Usage potentiel |
 |---|---|
 | `glm-5.2` | PO — rédaction user stories, specs |
-| `kimi-k2.7-code` | Dev — code TDD |
+| `glm-5.2 (Dev)` | Dev — code TDD |
 | `qwen3.5:397b` | Lead-Review — analyse de diff, commentaires inline |
 | `mistral-large-3:675b` | Fallback puissant, bon français |
 | `minimax-m2.7` | Alternative coding |
@@ -68,7 +67,7 @@ en TDD, avec déploiement Netlify.
 ## Contraintes techniques identifiées
 
 - **Ollama Cloud Pro** : 3 modèles simultanés max.
-  - PO (glm-5.2) + Dev (kimi-k2.7-code) + LeadDev (qwen3.5:397b) = 3 → au maximum.
+  - PO (glm-5.2) + Dev (glm-5.2 (Dev)) + LeadDev (qwen3.5:397b) = 3 → au maximum.
   - Si un 4ème rôle est ajouté, il faudra upgrader vers Max ($100/mo) ou séquencer.
 
 - **Rate limits Pro** : ~2.5M tokens/session, ~14M/semaine.

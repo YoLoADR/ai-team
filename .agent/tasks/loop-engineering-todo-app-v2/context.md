@@ -57,7 +57,7 @@ nécessaires pour mettre en place l'environnement des agents.
 | Kanban | GitHub Project V2 |
 | Orchestration bots | OpenHands runtime self-hosted (Docker sur carapace) |
 | LLM PO | glm-5.2 (Ollama Cloud) |
-| LLM Dev | kimi-k2.7-code (Ollama Cloud) |
+| LLM Dev | glm-5.2 (Ollama Cloud) — kimi-k2.7-code abandonné (trop lent 5-10min) |
 | LLM Lead Dev | qwen3.5:397b (Ollama Cloud, prompt review) |
 
 ## Architecture cible
