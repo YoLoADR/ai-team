@@ -40,7 +40,7 @@ user story → tests → implémentation → review → merge.
 | LLM PO | minimax-m3:cloud (Ollama Cloud, 1M ctx) |
 | LLM Dev | kimi-k2.7-code:cloud (Ollama Cloud, coding-focused) |
 | LLM Lead Dev | deepseek-v4-pro:cloud (Ollama Cloud, 3 reasoning modes) |
-| Hébergement bots | VM 101 sur Precision (Proxmox, 4 vCPU, 6 Go RAM, 60 Go) |
+| Hébergement bots | VM 102 sur Precision (Proxmox, 2 vCPU, 4 Go RAM, 30 Go) |
 
 ## Ollama Cloud — API key
 
@@ -87,7 +87,7 @@ Modèles exclus (petits) : qwen2.5:7b, gemma3:12b, gemma3:4b — l'utilisateur v
 └── note.md
 
 Precision (Dell Tower 3420, Proxmox, 100.111.21.3)
-└── VM 101 "ai-agents-vm" (4 vCPU, 6 Go RAM, 60 Go)
+└── VM 102 "ai-agents-vm" (2 vCPU, 4 Go RAM, 30 Go)
     ├── Hermes Gateway (cron + Telegram)
     ├── po-bot      (profile) → minimax-m3:cloud    → Docker sandbox → GH token PO
     ├── dev-bot     (profile) → kimi-k2.7-code:cloud → Docker sandbox → GH token DEV

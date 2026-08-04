@@ -13,7 +13,10 @@ et un **Lead Developer** (review et merge).
 - **Licence** : MIT (Nous Research)
 - **Repo** : https://github.com/NousResearch/hermes-agent
 - **Rôle** : Héberger les 3 profils (bots), gérer le cron, isoler via Docker
-- **Déploiement** : VM 101 sur Precision (Proxmox, 4 vCPU, 6 Go RAM, 60 Go)
+- **Déploiement** : VM 102 sur Precision (Proxmox, 2 vCPU, 4 Go RAM, 30 Go)
+- **Installation** : `pip install hermes-agent` (v0.19.0)
+- **Pourquoi pas VM 101** : déjà prise par openhands-vm (autre équipe)
+- **Pourquoi pas VM 100** : déjà saturée (cubes sellers + Qdrant, 8 Go RAM)
 
 ### 2. Bots (3 profils Hermes)
 
@@ -25,10 +28,22 @@ et un **Lead Developer** (review et merge).
 
 ### 3. Isolation
 
-Chaque bot est isolé par **3 couches** :
+Chaque bot est isolé par **2 couches** (Docker désactivé en pratique) :
 1. **Hermes Profile** : `HERMES_HOME` séparé (config, .env, memory, sessions, skills)
-2. **Docker terminal backend** : container dédié (`--cap-drop ALL`, `no-new-privileges`, tmpfs)
-3. **GitHub token** : permissions distinctes par token machine (1 GitHub App, 3 tokens)
+2. **GitHub token** : actuellement 1 token partagé (YoLoADR), évolution vers GitHub App + 3 tokens
+
+**Note** : Le Docker backend était prévu mais désactivé (`terminal.backend: local`)
+car les bots ont besoin du `gh` CLI installé sur la VM pour interagir avec GitHub.
+Le Docker backend aurait isolé le `gh` CLI du host.
+
+### 3b. Bot Telegram (point d'entrée)
+
+- **Script** : `telegram-bot.py` (python-telegram-bot v22, custom — pas le gateway Hermes)
+- **Pourquoi pas le gateway Hermes** : l'adapter Telegram d'Hermes reste bloqué sur
+  "Connecting to Telegram" (problème DoH + conflit polling). Script custom plus fiable.
+- **Serveur** : Contabo (100.98.194.18) — service systemd `loop-engineering-bot.service`
+- **Rôle** : reçoit les messages Telegram, route via SSH vers les bots sur Precision VM 102
+- **Bot** : @loop_engineering_team_bot (créé via @BotFather)
 
 ### 4. Kanban : GitHub Issues + GitHub Project V2
 
@@ -108,20 +123,31 @@ Chaque bot est isolé par **3 couches** :
 ## Infrastructure
 
 ```
-Precision (Dell Tower 3420, Proxmox, 100.111.21.3)
-├── ai-sales-vm (VM 100, existante — cubes sellers)
-└── ai-agents-vm (VM 101, NOUVELLE — bots Hermes)
-    ├── OS : Ubuntu 24.04 Server
-    ├── vCPU : 4 (partagés sur Xeon 4c/8t)
-    ├── RAM : 6 Go (sur 15 Go total Precision)
-    ├── Disk : 60 Go (sur 931 Go total)
-    ├── Réseau : Tailscale (IP dédiée, egress uniquement)
-    ├── Docker + Docker Compose
-    ├── Hermes Agent (installé via curl)
-    ├── Gateway Hermes (systemd service)
-    ├── Profile po-bot      → Docker sandbox → Ollama Cloud → GitHub token PO
-    ├── Profile dev-bot     → Docker sandbox → Ollama Cloud → GitHub token DEV
-    └── Profile lead-dev-bot → Docker sandbox → Ollama Cloud → GitHub token LEAD
+Contabo (100.98.194.18, VPS Ubuntu 24.04, 8 Go RAM)
+├── loop-engineering-bot.service (telegram-bot.py, python-telegram-bot v22)
+├── tgc-qdrant (NON TOUCHÉ)
+├── maya-dispatcher-maya-1 (NON TOUCHÉ)
+└── maya-waha-maya-1 (NON TOUCHÉ)
+    │ SSH → root@100.111.21.3
+    ▼
+Precision (Dell Tower 3420, Proxmox, 100.111.21.3, Xeon 4c/8t, 15 Go RAM)
+├── VM 100 "ai-sales-vm" (NON TOUCHÉE — cubes sellers, 8 Go RAM)
+├── VM 101 "openhands-vm" (NON TOUCHÉE — autre équipe, vide)
+└── VM 102 "ai-agents-vm" (CELLE-CI)
+    ├── OS : Ubuntu 24.04 Server (LXC container)
+    ├── vCPU : 2, RAM : 4 Go, Disk : 30 Go
+    ├── IP : 192.168.1.76
+    ├── Hermes Agent v0.19.0 (pip install)
+    ├── User : hermes
+    ├── gh CLI : authentifié avec token YoLoADR
+    ├── 3 profils Hermes :
+    │   ├── po-bot       → minimax-m3:cloud    → Ollama Cloud → GitHub
+    │   ├── dev-bot      → kimi-k2.7-code:cloud → Ollama Cloud → GitHub
+    │   └── lead-dev-bot → deepseek-v4-pro:cloud → Ollama Cloud → GitHub
+    └── Workspaces :
+        ├── /home/hermes/repo/           → ai-team (git clone)
+        └── /home/hermes/projects/
+            └── ai-hirekit/              → ai-hirekit (git clone)
 ```
 
 ## Projets concernés
