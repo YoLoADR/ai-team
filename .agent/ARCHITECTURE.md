@@ -19,7 +19,7 @@ sa stratégie.
 |---|---|---|---|---|---|
 | 🇨🇺 **Cuba** | `YoLoADR/ai-team-cuba` | OpenHands | carapace (109.199.97.174) | Todo | `YoLoADR/todo-cuba` |
 | 🇭🇹 **Haiti** | `YoLoADR/ai-team-haiti` | Hermes v0.19.0 | Precision VM 102 | Todo | `YoLoADR/todo-haiti` |
-| 🇬🇫 **Guyane** | `YoLoADR/ai-team-guyane` | Hermes v0.19.0 | Precision VM 102 | ai-hirekit | `YoLoADR/ai-hirekit` |
+| 🇬🇫 **Guyane** | `YoLoADR/ai-team-guyane` | Hermes v0.19.0 | Precision VM 102 | Todo | `YoLoADR/todo-guyane` |
 
 **Principe** : le workflow loop vit dans le repo projet (c'est là que les events
 GitHub se déclenchent), mais il SSH vers l'infra de l'équipe. L'équipe est "l'usine",
@@ -46,7 +46,7 @@ Le bot Telegram `@loop_engineering_team_bot` (sur Contabo) route les commandes
 préfixées par équipe :
 - `/cuba_po`, `/cuba_dev`, `/cuba_lead` → Yanet, Raúl, Camila (SSH carapace)
 - `/haiti_po`, `/haiti_dev`, `/haiti_lead` → Jean-Marc, Mireille, Frantz (SSH VM 102)
-- `/guyane_recon`, `/guyane_poster`, `/guyane_review` → Léopold, Manon, Sylviane (SSH VM 102)
+- `/guyane_po`, `/guyane_dev`, `/guyane_lead` → Léopold, Ludovic, Roseline (SSH VM 102)
 - `/teams` → statut global, `/motherboard` → lien Kanban
 
 ## Composants
@@ -190,7 +190,7 @@ Precision (Dell Tower 3420, Proxmox, 100.111.21.3, Xeon 4c/8t, 15 Go RAM)
     └── Workspaces :
         ├── /home/hermes/repo/           → ai-team (git clone)
         └── /home/hermes/projects/
-            └── ai-hirekit/              → ai-hirekit (git clone)
+            └── todo-guyane/             → todo-guyane (git clone)
 ```
 
 ## Projets concernés

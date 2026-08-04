@@ -38,28 +38,19 @@ jobs:
 
             // Mapping repo → équipe
             const TEAM_BY_REPO = {
-              'YoLoADR/ai-team-cuba': 'cuba',     // v2 par défaut (labels v1 diffèrent)
-              'YoLoADR/ai-hirekit': 'guyane'
+              'YoLoADR/todo-cuba': 'cuba',
+              'YoLoADR/todo-haiti': 'haiti',
+              'YoLoADR/todo-guyane': 'guyane'
             };
 
-            // Détermine l'équipe selon le repo et les labels
-            function getTeam(repoFullName, labels) {
-              if (repoFullName === 'YoLoADR/ai-hirekit') return 'guyane';
-              if (repoFullName === 'YoLoADR/ai-team-cuba') {
-                // v1 (Haiti) utilise minimax-m3, v2 (Cuba) utilise glm-5.2
-                // Différenciation par label : v1 utilise "user-story", v2 aussi
-                // En pratique, on déduit du label de l'issue
-                // Si label "v1" → haiti, sinon → cuba (v2 par défaut)
-                const labelNames = labels.map(l => l.name || l);
-                if (labelNames.includes('haiti') || labelNames.includes('v1')) return 'haiti';
-                return 'cuba';
-              }
-              return 'unknown';
+            // Détermine l'équipe selon le repo (1 repo = 1 équipe)
+            function getTeam(repoFullName) {
+              return TEAM_BY_REPO[repoFullName] || 'unknown';
             }
 
             const { payload, eventName } = context;
             const repoFullName = context.repo.owner + '/' + context.repo.repo;
-            const team = getTeam(repoFullName, payload.issue?.labels || payload.pull_request?.labels || []);
+            const team = getTeam(repoFullName);
 
             console.log(`Event: ${eventName}, Repo: ${repoFullName}, Team: ${team}`);
 

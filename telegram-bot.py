@@ -47,12 +47,12 @@ TEAMS = {
         },
     },
     "guyane": {
-        "name": "🇬🇫 Guyane (Hermes, VM 102 — projet: ai-hirekit)",
+        "name": "🇬🇫 Guyane (Hermes, VM 102 — projet: todo-guyane)",
         "server": "vm102",
         "members": {
-            "recon": ("Léopold", "glm-5.2:cloud", "Recon Agent"),
-            "poster": ("Manon", "4 modèles A/B", "Poster Agent"),
-            "review": ("Sylviane", "deepseek-v4-pro:cloud", "Review Agent"),
+            "po": ("Léopold", "glm-5.2:cloud", "Product Owner"),
+            "dev": ("Ludovic", "kimi-k2.7-code:cloud", "Developer"),
+            "lead": ("Roseline", "deepseek-v4-pro:cloud", "Lead Developer"),
         },
     },
 }
@@ -67,18 +67,18 @@ LEGACY_COMMANDS = {
 
 PROJECTS = {
     "cuba": {
-        "repo": "YoLoADR/ai-team-cuba",
-        "path": "/home/hermes/repo",
+        "repo": "YoLoADR/todo-cuba",
+        "path": "/opt/ai-team-loop/workspaces/todo-cuba",
         "server": "carapace",
     },
     "haiti": {
-        "repo": "YoLoADR/ai-team-cuba",
-        "path": "/home/hermes/repo",
+        "repo": "YoLoADR/todo-haiti",
+        "path": "/home/hermes/projects/todo-haiti",
         "server": "vm102",
     },
     "guyane": {
-        "repo": "YoLoADR/ai-hirekit",
-        "path": "/home/hermes/projects/ai-hirekit",
+        "repo": "YoLoADR/todo-guyane",
+        "path": "/home/hermes/projects/todo-guyane",
         "server": "vm102",
     },
 }
@@ -98,10 +98,10 @@ async def cmd_start(update, context):
         "  `/haiti_po <msg>` — Jean-Marc (PO)\n"
         "  `/haiti_dev <msg>` — Mireille (Dev)\n"
         "  `/haiti_lead <msg>` — Frantz (Lead)\n\n"
-        "*🇬🇫 Guyane* (Hermes, A/B 4 modèles)\n"
-        "  `/guyane_recon <msg>` — Léopold (Recon)\n"
-        "  `/guyane_poster <msg>` — Manon (Poster)\n"
-        "  `/guyane_review <msg>` — Sylviane (Review)\n\n"
+        "*🇬🇫 Guyane* (Hermes, glm-5.2 + kimi + deepseek)\n"
+        "  `/guyane_po <msg>` — Léopold (PO)\n"
+        "  `/guyane_dev <msg>` — Ludovic (Dev)\n"
+        "  `/guyane_lead <msg>` — Roseline (Lead)\n\n"
         "*Global:*\n"
         "  `/teams` — statut des 3 équipes\n"
         "  `/motherboard` — lien Kanban unifié\n"
@@ -123,87 +123,34 @@ async def cmd_help(update, context):
 async def cmd_status(update, context):
     msg = await update.message.reply_text("⏳ Récupération de l'état...")
     try:
-        # Cuba + Haiti: ai-team repo
-        result = subprocess.run(
-            [
-                "gh",
-                "issue",
-                "list",
-                "--repo",
-                "YoLoADR/ai-team-cuba",
-                "--state",
-                "open",
-                "--json",
-                "number,title,labels",
-                "--limit",
-                "10",
-            ],
-            capture_output=True,
-            text=True,
-            timeout=15,
-        )
-        ai_team_issues = result.stdout[:400] if result.stdout else "Aucune issue"
 
-        result = subprocess.run(
-            [
-                "gh",
-                "pr",
-                "list",
-                "--repo",
-                "YoLoADR/ai-team-cuba",
-                "--state",
-                "open",
-                "--json",
-                "number,title",
-                "--limit",
-                "5",
-            ],
-            capture_output=True,
-            text=True,
-            timeout=15,
-        )
-        ai_team_prs = result.stdout[:400] if result.stdout else "Aucune PR"
+        def gh_list(repo, kind):
+            result = subprocess.run(
+                [
+                    "gh",
+                    kind,
+                    "list",
+                    "--repo",
+                    repo,
+                    "--state",
+                    "open",
+                    "--json",
+                    "number,title",
+                    "--limit",
+                    "10",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=15,
+            )
+            return result.stdout[:300] if result.stdout else "Aucun"
 
-        # Guyane: ai-hirekit repo
-        result = subprocess.run(
-            [
-                "gh",
-                "issue",
-                "list",
-                "--repo",
-                "YoLoADR/ai-hirekit",
-                "--state",
-                "open",
-                "--json",
-                "number,title,labels",
-                "--limit",
-                "10",
-            ],
-            capture_output=True,
-            text=True,
-            timeout=15,
-        )
-        hirekit_issues = result.stdout[:400] if result.stdout else "Aucune issue"
-
-        result = subprocess.run(
-            [
-                "gh",
-                "pr",
-                "list",
-                "--repo",
-                "YoLoADR/ai-hirekit",
-                "--state",
-                "open",
-                "--json",
-                "number,title",
-                "--limit",
-                "5",
-            ],
-            capture_output=True,
-            text=True,
-            timeout=15,
-        )
-        hirekit_prs = result.stdout[:400] if result.stdout else "Aucune PR"
+        cuba_issues = gh_list("YoLoADR/todo-cuba", "issue")
+        cuba_prs = gh_list("YoLoADR/todo-cuba", "pr")
+        haiti_issues = gh_list("YoLoADR/todo-haiti", "issue")
+        haiti_prs = gh_list("YoLoADR/todo-haiti", "pr")
+        guyane_issues = gh_list("YoLoADR/todo-guyane", "issue")
+        guyane_prs = gh_list("YoLoADR/todo-guyane", "pr")
 
         # VM 102 status
         result = subprocess.run(
@@ -216,12 +163,15 @@ async def cmd_status(update, context):
 
         text = (
             f"📊 *État global*\n\n"
-            f"🇨🇺 *Cuba + Haiti* (ai-team):\n"
-            f"  Issues: {ai_team_issues[:200]}\n"
-            f"  PRs: {ai_team_prs[:200]}\n\n"
-            f"🇬🇫 *Guyane* (ai-hirekit):\n"
-            f"  Issues: {hirekit_issues[:200]}\n"
-            f"  PRs: {hirekit_prs[:200]}\n\n"
+            f"🇨🇺 *Cuba* (todo-cuba):\n"
+            f"  Issues: {cuba_issues[:200]}\n"
+            f"  PRs: {cuba_prs[:200]}\n\n"
+            f"🇭🇹 *Haiti* (todo-haiti):\n"
+            f"  Issues: {haiti_issues[:200]}\n"
+            f"  PRs: {haiti_prs[:200]}\n\n"
+            f"🇬🇫 *Guyane* (todo-guyane):\n"
+            f"  Issues: {guyane_issues[:200]}\n"
+            f"  PRs: {guyane_prs[:200]}\n\n"
             f"🖥️ *VM 102:* {vm}"
         )
         await msg.edit_text(text, parse_mode="Markdown")
@@ -278,10 +228,10 @@ async def send_to_hermes_bot(team_key, role, message, update):
     # Hermes profile name mapping
     if team_key == "haiti":
         profile = f"{role}-bot"  # po-bot, dev-bot, lead-dev-bot
-        project_path = "/home/hermes/repo"
+        project_path = PROJECTS["haiti"]["path"]
     elif team_key == "guyane":
-        profile = f"guyane-{role}-bot"  # guyane-recon-bot, guyane-poster-bot, guyane-review-bot
-        project_path = "/home/hermes/projects/ai-hirekit"
+        profile = f"guyane-{role}-bot"  # guyane-po-bot, guyane-dev-bot, guyane-lead-bot
+        project_path = PROJECTS["guyane"]["path"]
     else:
         return
 
@@ -346,7 +296,7 @@ async def send_to_carapace_agent(role, message, update):
             [
                 "ssh",
                 "root@109.199.97.174",
-                f"cd /opt/ai-team-loop && python3 run-agent.py {carapace_role} '{message}' YoLoADR/ai-team-cuba",
+                f"cd /opt/ai-team-loop && python3 run-agent.py {carapace_role} '{message}' {PROJECTS['cuba']['repo']}",
             ],
             capture_output=True,
             text=True,
@@ -436,7 +386,7 @@ def main():
         )
 
     # Guyane commands (Hermes on VM 102)
-    for role in ["recon", "poster", "review"]:
+    for role in ["po", "dev", "lead"]:
         app.add_handler(
             CommandHandler(f"guyane_{role}", make_team_handler("guyane", role))
         )
