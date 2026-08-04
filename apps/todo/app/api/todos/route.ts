@@ -1,39 +1,24 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createTodo, getAllTodos } from '../../../lib/db/repository';
-import { createTodoSchema } from '../../../lib/validators';
-import {
-  errorResponse,
-  parseBody,
-  mapCreateValidationError,
-} from '../../../lib/errors';
+import { NextRequest } from 'next/server';
+import { todoRepository } from '../../../lib/repositories/todo-repository';
+import { validateCreateTodo } from '../../../lib/validators';
+import { successResponse, errorResponse } from '../../../lib/api-utils';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const todos = getAllTodos();
-    return NextResponse.json(todos);
-  } catch {
-    return errorResponse('DATABASE_ERROR', 500);
+    const todos = todoRepository.findAll();
+    return successResponse(todos);
+  } catch (error) {
+    return errorResponse(error);
   }
 }
 
 export async function POST(request: NextRequest) {
-  const parsed = await parseBody(request);
-
-  if (!parsed.ok) {
-    return errorResponse(parsed.code, parsed.status);
-  }
-
-  const validation = createTodoSchema.safeParse(parsed.data);
-
-  if (!validation.success) {
-    const { error, status, message } = mapCreateValidationError(validation.error.issues);
-    return errorResponse(error, status, message);
-  }
-
   try {
-    const todo = createTodo(validation.data);
-    return NextResponse.json(todo, { status: 201 });
-  } catch {
-    return errorResponse('DATABASE_ERROR', 500);
+    const body = await request.json();
+    const validated = validateCreateTodo(body);
+    const todo = todoRepository.create(validated);
+    return successResponse(todo, 201);
+  } catch (error) {
+    return errorResponse(error);
   }
 }

@@ -1,32 +1,24 @@
 import Database from 'better-sqlite3';
-import { drizzle, type BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
-import { mkdirSync, existsSync } from 'fs';
-import { dirname } from 'path';
+import { drizzle } from 'drizzle-orm/better-sqlite3';
+import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import * as schema from './schema';
 
-let sqliteInstance: Database | null = null;
-let dbInstance: BetterSQLite3Database<typeof schema> | null = null;
+export type DB = BetterSQLite3Database<typeof schema>;
 
-function ensureDirectory(path: string) {
-  if (path !== ':memory:' && !existsSync(dirname(path))) {
-    mkdirSync(dirname(path), { recursive: true });
+let _db: DB | null = null;
+
+export function getDb(): DB {
+  if (!_db) {
+    const dbPath = process.env.DB_PATH || './sqlite.db';
+    const sqlite = new Database(dbPath);
+    sqlite.pragma('journal_mode = WAL');
+    _db = drizzle(sqlite, { schema });
   }
+  return _db;
 }
 
-export function getSqlite(): Database {
-  if (!sqliteInstance) {
-    const databaseUrl = process.env.DATABASE_URL || './data/todo.db';
-    ensureDirectory(databaseUrl);
-    sqliteInstance = new Database(databaseUrl);
-  }
-
-  return sqliteInstance;
+export function setDb(db: DB): void {
+  _db = db;
 }
 
-export function getDb(): BetterSQLite3Database<typeof schema> {
-  if (!dbInstance) {
-    dbInstance = drizzle(getSqlite(), { schema });
-  }
-
-  return dbInstance;
-}
+export { schema };

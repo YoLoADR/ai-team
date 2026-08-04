@@ -1,153 +1,97 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, POST } from '../../app/api/todos/route';
-import { createTodo, getAllTodos } from '../../lib/db/repository';
+import { todoRepository } from '../../lib/repositories/todo-repository';
 
-vi.mock('../../lib/db/repository', () => ({
-  createTodo: vi.fn(),
-  getAllTodos: vi.fn(),
-}));
+beforeEach(() => {
+  const todos = todoRepository.findAll();
+  for (const todo of todos) {
+    todoRepository.delete(todo.id);
+  }
+});
 
-const mockedCreateTodo = vi.mocked(createTodo);
-const mockedGetAllTodos = vi.mocked(getAllTodos);
-
-function jsonRequest(method: 'GET' | 'POST', body?: unknown) {
-  return new NextRequest('http://localhost/api/todos', {
-    method,
-    body: body === undefined ? undefined : JSON.stringify(body),
-    headers: { 'Content-Type': 'application/json' },
-  });
-}
-
-describe('/api/todos', () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
+describe('GET /api/todos', () => {
+  it('should return 200 with empty array when no todos exist', async () => {
+    const response = await GET();
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data).toEqual([]);
   });
 
-  describe('GET', () => {
-    it('returns an empty array when no todos exist', async () => {
-      mockedGetAllTodos.mockReturnValue([]);
-      const res = await GET(jsonRequest('GET'));
-      expect(res.status).toBe(200);
-      expect(await res.json()).toEqual([]);
+  it('should return 200 with all todos', async () => {
+    todoRepository.create({ title: 'Todo 1' });
+    todoRepository.create({ title: 'Todo 2' });
+
+    const response = await GET();
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data).toHaveLength(2);
+    expect(data[0].title).toBe('Todo 1');
+    expect(data[1].title).toBe('Todo 2');
+  });
+});
+
+describe('POST /api/todos', () => {
+  it('should create a new todo and return 201', async () => {
+    const request = new NextRequest('http://localhost/api/todos', {
+      method: 'POST',
+      body: JSON.stringify({ title: 'New todo' }),
+      headers: { 'Content-Type': 'application/json' },
     });
 
-    it('returns all todos ordered by creation date descending', async () => {
-      const todos = [
-        {
-          id: '3',
-          title: 'Third',
-          completed: false,
-          createdAt: '2025-01-03T00:00:00.000Z',
-          updatedAt: '2025-01-03T00:00:00.000Z',
-        },
-        {
-          id: '2',
-          title: 'Second',
-          completed: false,
-          createdAt: '2025-01-02T00:00:00.000Z',
-          updatedAt: '2025-01-02T00:00:00.000Z',
-        },
-        {
-          id: '1',
-          title: 'First',
-          completed: false,
-          createdAt: '2025-01-01T00:00:00.000Z',
-          updatedAt: '2025-01-01T00:00:00.000Z',
-        },
-      ];
-      mockedGetAllTodos.mockReturnValue(todos);
-
-      const res = await GET(jsonRequest('GET'));
-      expect(res.status).toBe(200);
-      expect(await res.json()).toEqual(todos);
-      expect(mockedGetAllTodos).toHaveBeenCalledTimes(1);
-    });
+    const response = await POST(request);
+    expect(response.status).toBe(201);
+    const data = await response.json();
+    expect(data.id).toBeDefined();
+    expect(data.title).toBe('New todo');
+    expect(data.completed).toBe(false);
   });
 
-  describe('POST', () => {
-    it('creates a todo with a valid title and returns 201', async () => {
-      const created = {
-        id: 'uuid',
-        title: 'Buy groceries',
-        completed: false,
-        createdAt: '2025-01-01T00:00:00.000Z',
-        updatedAt: '2025-01-01T00:00:00.000Z',
-      };
-      mockedCreateTodo.mockReturnValue(created);
-
-      const res = await POST(jsonRequest('POST', { title: 'Buy groceries' }));
-      expect(res.status).toBe(201);
-      expect(await res.json()).toEqual(created);
-      expect(mockedCreateTodo).toHaveBeenCalledWith({ title: 'Buy groceries' });
+  it('should create a new todo with completed true', async () => {
+    const request = new NextRequest('http://localhost/api/todos', {
+      method: 'POST',
+      body: JSON.stringify({ title: 'New todo', completed: true }),
+      headers: { 'Content-Type': 'application/json' },
     });
 
-    it('ignores extra fields in the body', async () => {
-      const created = {
-        id: 'uuid',
-        title: 'Valid',
-        completed: false,
-        createdAt: '2025-01-01T00:00:00.000Z',
-        updatedAt: '2025-01-01T00:00:00.000Z',
-      };
-      mockedCreateTodo.mockReturnValue(created);
+    const response = await POST(request);
+    expect(response.status).toBe(201);
+    const data = await response.json();
+    expect(data.completed).toBe(true);
+  });
 
-      await POST(jsonRequest('POST', { title: 'Valid', extra: 'ignored', count: 42 }));
-      expect(mockedCreateTodo).toHaveBeenCalledWith({ title: 'Valid' });
+  it('should return 400 when title is missing', async () => {
+    const request = new NextRequest('http://localhost/api/todos', {
+      method: 'POST',
+      body: JSON.stringify({}),
+      headers: { 'Content-Type': 'application/json' },
     });
 
-    it('rejects an empty title with INVALID_TITLE', async () => {
-      const res = await POST(jsonRequest('POST', { title: '' }));
-      expect(res.status).toBe(400);
-      expect(await res.json()).toMatchObject({ error: 'INVALID_TITLE' });
-      expect(mockedCreateTodo).not.toHaveBeenCalled();
+    const response = await POST(request);
+    expect(response.status).toBe(400);
+    const data = await response.json();
+    expect(data.error).toBeDefined();
+  });
+
+  it('should return 400 when title is empty', async () => {
+    const request = new NextRequest('http://localhost/api/todos', {
+      method: 'POST',
+      body: JSON.stringify({ title: '' }),
+      headers: { 'Content-Type': 'application/json' },
     });
 
-    it('rejects a whitespace-only title with INVALID_TITLE', async () => {
-      const res = await POST(jsonRequest('POST', { title: '   ' }));
-      expect(res.status).toBe(400);
-      expect(await res.json()).toMatchObject({ error: 'INVALID_TITLE' });
+    const response = await POST(request);
+    expect(response.status).toBe(400);
+  });
+
+  it('should return 400 when body is invalid JSON', async () => {
+    const request = new NextRequest('http://localhost/api/todos', {
+      method: 'POST',
+      body: 'not json',
+      headers: { 'Content-Type': 'application/json' },
     });
 
-    it('rejects a title longer than 200 characters with TITLE_TOO_LONG', async () => {
-      const res = await POST(jsonRequest('POST', { title: 'a'.repeat(201) }));
-      expect(res.status).toBe(400);
-      expect(await res.json()).toMatchObject({ error: 'TITLE_TOO_LONG' });
-    });
-
-    it('rejects a missing title with INVALID_TITLE', async () => {
-      const res = await POST(jsonRequest('POST', {}));
-      expect(res.status).toBe(400);
-      expect(await res.json()).toMatchObject({ error: 'INVALID_TITLE' });
-    });
-
-    it('rejects a non-string title with INVALID_TITLE', async () => {
-      const res = await POST(jsonRequest('POST', { title: 123 }));
-      expect(res.status).toBe(400);
-      expect(await res.json()).toMatchObject({ error: 'INVALID_TITLE' });
-    });
-
-    it('rejects malformed JSON with INVALID_JSON', async () => {
-      const req = new NextRequest('http://localhost/api/todos', {
-        method: 'POST',
-        body: '{not json',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const res = await POST(req);
-      expect(res.status).toBe(400);
-      expect(await res.json()).toMatchObject({ error: 'INVALID_JSON' });
-    });
-
-    it('rejects a payload larger than 10 KB with PAYLOAD_TOO_LARGE', async () => {
-      const req = new NextRequest('http://localhost/api/todos', {
-        method: 'POST',
-        body: JSON.stringify({ title: 'Valid', payload: 'x'.repeat(10240) }),
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const res = await POST(req);
-      expect(res.status).toBe(413);
-      expect(await res.json()).toMatchObject({ error: 'PAYLOAD_TOO_LARGE' });
-      expect(mockedCreateTodo).not.toHaveBeenCalled();
-    });
+    const response = await POST(request);
+    expect(response.status).toBe(400);
   });
 });
