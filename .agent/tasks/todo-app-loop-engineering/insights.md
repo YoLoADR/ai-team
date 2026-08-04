@@ -1,5 +1,7 @@
 # Insights — Loop Engineering Todo App
 
+> **Construit avec DeepSeek** (ollama-cloud/glm-5.2:cloud via opencode) le 2026-08-03.
+
 ## Contexte utilisateur (session 2026-08-03)
 
 Yohann veut mettre en place une approche **loop engineering** avec 3 bots IA qui

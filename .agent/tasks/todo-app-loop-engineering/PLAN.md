@@ -1,5 +1,7 @@
 # Plan détaillé — Loop Engineering Todo App
 
+> **Construit avec DeepSeek** (ollama-cloud/glm-5.2:cloud via opencode) le 2026-08-03.
+
 ## 1. Vue d'ensemble
 
 Mettre en place un workflow **loop engineering** avec 3 bots IA Hermes qui collaborent

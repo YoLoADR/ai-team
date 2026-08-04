@@ -1,5 +1,7 @@
 # Architecture — Loop Engineering (ai-team)
 
+> **Construit avec DeepSeek** (ollama-cloud/glm-5.2:cloud via opencode) le 2026-08-03.
+
 ## Vue d'ensemble
 
 Le **loop engineering** est un workflow où 3 bots IA collaborent pour développer

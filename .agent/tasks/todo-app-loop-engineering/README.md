@@ -1,5 +1,11 @@
 # README — Loop Engineering Team (Hermes)
 
+> **Construit avec DeepSeek** — cette équipe loop engineering a été conçue, déployée
+> et validée lors d'une session assistée par DeepSeek (ollama-cloud/glm-5.2:cloud via
+> opencode) le 2026-08-03. L'infrastructure, les skills, les scripts VM, le bot
+> Telegram et le loop complet (PO → Dev → Lead Dev → merge) ont été réalisés
+> durant cette session.
+
 ## Raisonnement et décisions clés
 
 Cette section retrace le raisonnement qui a mené à chaque choix d'architecture.
