@@ -91,24 +91,24 @@ async def cmd_start(update, context):
         "🤖 *AI Teams — Caraïbes*\n\n"
         "3 équipes IA, chacune indépendante avec son moteur et ses modèles.\n\n"
         "*🇨🇺 Cuba* (OpenHands, glm-5.2 + qwen3.5)\n"
-        "  `/cuba-po <msg>` — Yanet (PO)\n"
-        "  `/cuba-dev <msg>` — Raúl (Dev)\n"
-        "  `/cuba-lead <msg>` — Camila (Lead)\n\n"
+        "  `/cuba_po <msg>` — Yanet (PO)\n"
+        "  `/cuba_dev <msg>` — Raúl (Dev)\n"
+        "  `/cuba_lead <msg>` — Camila (Lead)\n\n"
         "*🇭🇹 Haiti* (Hermes, minimax + kimi + deepseek)\n"
-        "  `/haiti-po <msg>` — Jean-Marc (PO)\n"
-        "  `/haiti-dev <msg>` — Mireille (Dev)\n"
-        "  `/haiti-lead <msg>` — Frantz (Lead)\n\n"
+        "  `/haiti_po <msg>` — Jean-Marc (PO)\n"
+        "  `/haiti_dev <msg>` — Mireille (Dev)\n"
+        "  `/haiti_lead <msg>` — Frantz (Lead)\n\n"
         "*🇬🇫 Guyane* (Hermes, A/B 4 modèles)\n"
-        "  `/guyane-recon <msg>` — Léopold (Recon)\n"
-        "  `/guyane-poster <msg>` — Manon (Poster)\n"
-        "  `/guyane-review <msg>` — Sylviane (Review)\n\n"
+        "  `/guyane_recon <msg>` — Léopold (Recon)\n"
+        "  `/guyane_poster <msg>` — Manon (Poster)\n"
+        "  `/guyane_review <msg>` — Sylviane (Review)\n\n"
         "*Global:*\n"
         "  `/teams` — statut des 3 équipes\n"
         "  `/motherboard` — lien Kanban unifié\n"
         "  `/status` — état détaillé (issues + PRs + VM)\n"
         "  `/help` — cette aide\n\n"
         "*Anciennes commandes* (alias, transition):\n"
-        "  `/po` = `/cuba-po`, `/dev` = `/cuba-dev`, `/lead` = `/cuba-lead`",
+        "  `/po` = `/cuba_po`, `/dev` = `/cuba_dev`, `/lead` = `/cuba_lead`",
         parse_mode="Markdown",
     )
 
@@ -427,18 +427,18 @@ def main():
 
     # Cuba commands (OpenHands on carapace)
     for role in ["po", "dev", "lead"]:
-        app.add_handler(CommandHandler(f"cuba-{role}", make_team_handler("cuba", role)))
+        app.add_handler(CommandHandler(f"cuba_{role}", make_team_handler("cuba", role)))
 
     # Haiti commands (Hermes on VM 102)
     for role in ["po", "dev", "lead"]:
         app.add_handler(
-            CommandHandler(f"haiti-{role}", make_team_handler("haiti", role))
+            CommandHandler(f"haiti_{role}", make_team_handler("haiti", role))
         )
 
     # Guyane commands (Hermes on VM 102)
     for role in ["recon", "poster", "review"]:
         app.add_handler(
-            CommandHandler(f"guyane-{role}", make_team_handler("guyane", role))
+            CommandHandler(f"guyane_{role}", make_team_handler("guyane", role))
         )
 
     # Legacy commands (transition — alias to Cuba)

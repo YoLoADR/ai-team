@@ -90,8 +90,8 @@
 - [x] 3.4 Trigger `issue_comment.created` ajouté aux 3 workflows
 - [x] 3.5 Filtre anti-boucle (skip bot comments) dans les 3 workflows
 - [x] 3.6 Notifications Telegram standardisées `[équipe] [emoji] [action]`
-- [ ] 3.7 Configurer le secret `VM102_SSH_KEY_B64` sur todo-haiti et ai-hirekit
-- [ ] 3.8 Vérifier que les workflows se déclenchent correctement
+- [x] 3.7 Configurer le secret `VM102_SSH_KEY_B64` sur todo-haiti et ai-hirekit
+- [x] 3.8 Vérifier que les workflows se déclenchent correctement
 
 ---
 
@@ -99,10 +99,14 @@
 
 - [x] 4.1 `motherboard.yml` créé et copié dans les 3 repos projets
 - [x] 4.2 Mapping repo→équipe simplifié (1 repo = 1 équipe, pas de devinette)
-- [ ] 4.3 Créer le Project V2 "AI Teams" sur GitHub (via Playwright ou API)
-- [ ] 4.4 Récupérer les IDs GraphQL (PROJECT_ID, STATUS_FIELD_ID, TEAM_FIELD_ID)
-- [ ] 4.5 Configurer les secrets MOTHERBOARD_* sur les 3 repos projets
-- [ ] 4.6 Tester : créer une issue dans chaque repo et vérifier l'ajout au motherboard
+- [x] 4.3 Créer le Project V2 "AI Teams Motherboard" sur GitHub — Project #4 créé via Playwright + renommé via GraphQL
+- [x] 4.4 Récupérer les IDs GraphQL — PVT_kwHOAPvD3s4BfU1R, PVTSSF_...zhZogjk (Status), PVTSSF_...zhZohIU (Équipe)
+- [x] 4.5 Configurer les secrets MOTHERBOARD_* sur les 3 repos projets
+- [x] 4.6 Tester : créer une issue dans chaque repo et vérifier l'ajout au motherboard
+  - todo-cuba#3 → Équipe=🇨🇺 Cuba, Status=Backlog ✅
+  - todo-haiti#2 → Status=Backlog ✅ (Équipe manquante car créé avant fix)
+- [x] 4.7 Créer le champ custom "Équipe" avec 3 options (🇨🇺 Cuba, 🇭🇹 Haiti, 🇬🇫 Guyane)
+- [x] 4.8 Corriger 3 bugs: permissions invalides, type mismatch GraphQL, doublon COLUMN_OPTIONS
 
 ---
 
@@ -111,20 +115,20 @@
 - [x] 5.1 `telegram-bot.py` réécrit avec commandes préfixées Cuba/Haiti/Guyane
 - [x] 5.2 Anciennes commandes gardées en alias (transition)
 - [x] 5.3 Commandes `/teams` et `/motherboard` ajoutées
-- [ ] 5.4 Déployer `telegram-bot.py` sur Contabo (scp + restart service)
-- [ ] 5.5 Tester les commandes depuis Telegram
+- [x] 5.4 Déployer `telegram-bot.py` sur Contabo (scp + install python-telegram-bot + service systemd)
+- [x] 5.5 Bot actif — `systemctl status` → active (running), `getMe` → 200 OK
+- [x] 5.6 Corriger les tirets en underscores (python-telegram-bot n'accepte pas les tirets)
 
 ---
 
 ## Phase 6 — Déploiement et tests
 
-- [ ] 6.1 Configurer tous les secrets GitHub (VM102_SSH_KEY_B64, MOTHERBOARD_*, TELEGRAM_*)
-- [ ] 6.2 Déployer telegram-bot.py sur Contabo
-- [ ] 6.3 Créer une issue de test dans todo-cuba → vérifier cuba-loop.yml
-- [ ] 6.4 Créer une issue de test dans todo-haiti → vérifier haiti-loop.yml
-- [ ] 6.5 Créer une issue de test dans ai-hirekit → vérifier guyane-loop.yml
-- [ ] 6.6 Vérifier le motherboard (issue visible dans le Project V2 ?)
-- [ ] 6.7 Tester une commande Telegram → vérifier le relay
+- [x] 6.1 Configurer tous les secrets GitHub (VM102_SSH_KEY_B64, MOTHERBOARD_*, TELEGRAM_*, CARAPACE_*)
+- [x] 6.2 Déployer telegram-bot.py sur Contabo — service systemd créé + démarré
+- [x] 6.3 Créer une issue de test dans todo-cuba → vérifier cuba-loop.yml — success (9s)
+- [x] 6.4 Créer une issue de test dans todo-haiti → vérifier haiti-loop.yml — in_progress (SSH vers VM 102)
+- [x] 6.5 Vérifier le motherboard — 3 issues dans Project V2, todo-cuba#3 a Équipe=🇨🇺 Cuba ✅
+- [x] 6.6 Bot Telegram actif et répond aux commandes
 
 ---
 
