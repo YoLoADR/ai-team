@@ -63,7 +63,7 @@ nécessaires pour mettre en place l'environnement des agents.
 ## Architecture cible
 
 ```
-/Users/yohannravino/Factory/ai-team/        # Repo local
+/Users/yohannravino/Factory/ai-team-cuba/        # Repo local
 ├── .agent/tasks/loop-engineering-todo-app-v2/  # Ce plan (comparaison avec v1)
 ├── apps/todo/                              # Sous-projet pilote Next.js Todo
 │   ├── .github/workflows/                  # CI/CD spécifique
@@ -147,6 +147,6 @@ Netlify
 - Tâches setup/infra : `todos.md` (ce dossier — uniquement setup, pas les user stories)
 - Journal : `insights.md` (ce dossier)
 - Architecture TGC de référence : `/Users/yohannravino/Factory/TGC/.agent/ARCHITECTURE.md.bak`
-- Note initiale : `/Users/yohannravino/Factory/ai-team/note.md`
+- Note initiale : `/Users/yohannravino/Factory/ai-team-cuba/note.md`
 - Pattern des tâches : `/Users/yohannravino/Factory/merenza/.agent/tasks/merenza-pilot-mvp/`
-- Plan v1 (comparaison) : `/Users/yohannravino/Factory/ai-team/.agent/tasks/loop-engineering-todo-app/`
+- Plan v1 (comparaison) : `/Users/yohannravino/Factory/ai-team-cuba/.agent/tasks/loop-engineering-todo-app/`

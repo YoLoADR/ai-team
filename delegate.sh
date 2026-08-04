@@ -28,7 +28,7 @@ fi
 source "$ENV_FILE"
 export GH_TOKEN GITHUB_TOKEN="$GH_TOKEN" OPENAI_API_KEY="$OLLAMA_API_KEY"
 
-REPO="YoLoADR/ai-team"
+REPO="YoLoADR/ai-team-cuba"
 SSH_CMD="ssh root@100.111.21.3"
 
 # ── Helpers ────────────────────────────────────────────────────

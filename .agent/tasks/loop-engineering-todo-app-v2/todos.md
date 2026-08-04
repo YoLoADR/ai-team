@@ -10,8 +10,8 @@
 > TODO du projet à leur place.
 
 ## Phase 0 — Préparation (opérateur)
-- [x] 0.1 Vérifier repo GitHub `ai-team` (existant: YoLoADR/ai-team, issues+projects activés)
-  - Preuve : `gh repo view YoLoADR/ai-team` → URL https://github.com/YoLoADR/ai-team
+- [x] 0.1 Vérifier repo GitHub `ai-team` (existant: YoLoADR/ai-team-cuba, issues+projects activés)
+  - Preuve : `gh repo view YoLoADR/ai-team-cuba` → URL https://github.com/YoLoADR/ai-team
 - [x] 0.2 Créer GitHub Project V2 Kanban (existant: project #3 "AI Team Loop Engineering")
   - Preuve : champ "Workflow Status" créé avec 5 colonnes (Backlog, Spec Ready, In Progress, In Review, Done)
   - Field ID: PVTSSF_lAHOAPvD3s4BfO2kzhZjQuc
@@ -21,9 +21,9 @@
   - Webhook URL : http://109.199.97.174:8095 (port ouvert dans iptables)
   - Note : port 8095 pas accessible depuis l'extérieur (pare-feu Contabo) → utiliser GitHub Actions comme relay
 - [x] 0.4 Configurer secrets GitHub (OLLAMA_CLOUD_API_KEY, APP_PRIVATE_KEY, APP_ID, WEBHOOK_SECRET)
-  - Preuve : `gh secret list --repo YoLoADR/ai-team` → APP_ID, APP_PRIVATE_KEY, OLLAMA_CLOUD_API_KEY, WEBHOOK_SECRET
+  - Preuve : `gh secret list --repo YoLoADR/ai-team-cuba` → APP_ID, APP_PRIVATE_KEY, OLLAMA_CLOUD_API_KEY, WEBHOOK_SECRET
   - Note : NETLIFY_AUTH_TOKEN + NETLIFY_SITE_ID à ajouter plus tard (pas bloquant pour le loop)
-- [x] 0.5 Initialiser Git dans `/Users/yohannravino/Factory/ai-team/` et committer le plan v2
+- [x] 0.5 Initialiser Git dans `/Users/yohannravino/Factory/ai-team-cuba/` et committer le plan v2
   - Preuve : commit ec18341 — `docs: add context.md to v2 plan`
 
 ## Phase 1 — Infrastructure OpenHands (carapace)
@@ -59,13 +59,13 @@
 - [x] 3.1 Issue #1 existante "[PO-Spec] CRUD tasks API" utilisée pour tester (manuel)
 - [x] 3.2 Issue #5 créée "[PO-Spec] Todolist API-first TDD - 5 user stories" (automatique)
 - [x] 3.3 PO-bot génère spec et commente sur l'issue (glm-5.2:cloud → 10401 chars, label ready-for-dev)
-  - Preuve : `gh issue view 5 --repo YoLoADR/ai-team` → 1 commentaire "Specification generated"
+  - Preuve : `gh issue view 5 --repo YoLoADR/ai-team-cuba` → 1 commentaire "Specification generated"
 - [x] 3.4 Dev-bot génère le code, crée une branche, push, ouvre une PR (kimi-k2.7-code:cloud)
   - Preuve : PR #6 ouverte, 9 fichiers, +815/-275 lignes, branche ai/impl/5
 - [x] 3.5 Lead-Review-bot review la PR avec diff réel (qwen3.5:397b:cloud)
-  - Preuve : `gh pr view 6 --repo YoLoADR/ai-team` → 1 review CHANGES_REQUESTED avec analyse détaillée
+  - Preuve : `gh pr view 6 --repo YoLoADR/ai-team-cuba` → 1 review CHANGES_REQUESTED avec analyse détaillée
 - [x] 3.6 Workflow GitHub Actions relay déclenche les agents automatiquement
-  - Preuve : `gh run list --repo YoLoADR/ai-team` → runs issues + pull_request + workflow_dispatch
+  - Preuve : `gh run list --repo YoLoADR/ai-team-cuba` → runs issues + pull_request + workflow_dispatch
 - [ ] 3.7 Corriger les agents si besoin (prompts système, config) — en cours d'itération
 
 ## Phase 4 — Documentation et livraison

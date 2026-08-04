@@ -14,7 +14,7 @@ via GitHub Issues + Pull Requests pour développer une application Todo Next.js 
 
 ## 2. Architecture du sous-projet
 
-Le todo app est un **sous-projet** de `/Users/yohannravino/Factory/ai-team/`.
+Le todo app est un **sous-projet** de `/Users/yohannravino/Factory/ai-team-cuba/`.
 
 ```
 ai-team/

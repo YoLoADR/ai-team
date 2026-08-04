@@ -1,0 +1,177 @@
+name: AI Teams Motherboard — Kanban unifié
+
+on:
+  issues:
+    types: [opened, labeled, closed]
+  pull_request:
+    types: [opened, closed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  projects: write
+
+jobs:
+  sync-to-motherboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.MOTHERBOARD_PAT }}
+          script: |
+            // === Configuration ===
+            // Project V2 ID — à créer manuellement une fois, puis mettre en secret
+            const PROJECT_NODE_ID = process.env.MOTHERBOARD_PROJECT_ID || '';
+            const STATUS_FIELD_ID = process.env.MOTHERBOARD_STATUS_FIELD_ID || '';
+            const TEAM_FIELD_ID = process.env.MOTHERBOARD_TEAM_FIELD_ID || '';
+
+            // Colonnes du Kanban motherboard
+            const COLUMN_OPTIONS = {
+              'Backlog':       'BACKLOG_OPTION_ID',
+              'Spec Ready':    'SPEC_OPTION_ID',
+              'In Progress':   'PROGRESS_OPTION_ID',
+              'In Review':     'REVIEW_OPTION_ID',
+              'Done':          'DONE_OPTION_ID'
+            };
+
+            // Mapping repo → équipe
+            const TEAM_BY_REPO = {
+              'YoLoADR/ai-team-cuba': 'cuba',     // v2 par défaut (labels v1 diffèrent)
+              'YoLoADR/ai-hirekit': 'guyane'
+            };
+
+            // Détermine l'équipe selon le repo et les labels
+            function getTeam(repoFullName, labels) {
+              if (repoFullName === 'YoLoADR/ai-hirekit') return 'guyane';
+              if (repoFullName === 'YoLoADR/ai-team-cuba') {
+                // v1 (Haiti) utilise minimax-m3, v2 (Cuba) utilise glm-5.2
+                // Différenciation par label : v1 utilise "user-story", v2 aussi
+                // En pratique, on déduit du label de l'issue
+                // Si label "v1" → haiti, sinon → cuba (v2 par défaut)
+                const labelNames = labels.map(l => l.name || l);
+                if (labelNames.includes('haiti') || labelNames.includes('v1')) return 'haiti';
+                return 'cuba';
+              }
+              return 'unknown';
+            }
+
+            const { payload, eventName } = context;
+            const repoFullName = context.repo.owner + '/' + context.repo.repo;
+            const team = getTeam(repoFullName, payload.issue?.labels || payload.pull_request?.labels || []);
+
+            console.log(`Event: ${eventName}, Repo: ${repoFullName}, Team: ${team}`);
+
+            if (!PROJECT_NODE_ID) {
+              console.log('MOTHERBOARD_PROJECT_ID not set — skipping. Create the Project V2 first and set the secret.');
+              return;
+            }
+
+            // Ajoute l'issue/PR au Project V2
+            async function addToProject(nodeId, teamName, statusName) {
+              try {
+                // Add item to project
+                const addResult = await github.graphql(`
+                  mutation($projectId: ID!, $contentId: ID!) {
+                    addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
+                      item { id }
+                    }
+                  }
+                `, { projectId: PROJECT_NODE_ID, contentId: nodeId });
+
+                const itemId = addResult.addProjectV2ItemById.item.id;
+                console.log(`Added item ${itemId} to project`);
+
+                // Set team field
+                if (TEAM_FIELD_ID) {
+                  await github.graphql(`
+                    mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: ProjectV2FieldValue!) {
+                      updateProjectV2ItemFieldValue(input: {
+                        projectId: $projectId,
+                        itemId: $itemId,
+                        fieldId: $fieldId,
+                        value: {singleSelectOptionId: $value}
+                      }) {
+                        projectV2Item { id }
+                      }
+                    }
+                  `, {
+                    projectId: PROJECT_NODE_ID,
+                    itemId: itemId,
+                    fieldId: TEAM_FIELD_ID,
+                    value: teamName
+                  });
+                }
+
+                // Set status field
+                if (STATUS_FIELD_ID && COLUMN_OPTIONS[statusName]) {
+                  await github.graphql(`
+                    mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: ProjectV2FieldValue!) {
+                      updateProjectV2ItemFieldValue(input: {
+                        projectId: $projectId,
+                        itemId: $itemId,
+                        fieldId: $fieldId,
+                        value: {singleSelectOptionId: $value}
+                      }) {
+                        projectV2Item { id }
+                      }
+                    }
+                  `, {
+                    projectId: PROJECT_NODE_ID,
+                    itemId: itemId,
+                    fieldId: STATUS_FIELD_ID,
+                    value: COLUMN_OPTIONS[statusName]
+                  });
+                }
+
+                console.log(`Set team=${teamName}, status=${statusName}`);
+              } catch (e) {
+                console.log(`Error adding to project: ${e.message}`);
+              }
+            }
+
+            // Route selon l'événement
+            if (eventName === 'issues' && payload.action === 'opened') {
+              await addToProject(payload.issue.node_id, team, 'Backlog');
+            } else if (eventName === 'issues' && payload.action === 'labeled') {
+              const label = payload.label.name;
+              let status = 'Backlog';
+              if (label === 'ready-for-dev' || label === 'comptes') status = 'Spec Ready';
+              else if (label === 'posting' || label === 'in-progress') status = 'In Progress';
+              else if (label === 'review' || label === 'needs-work') status = 'In Review';
+              // Note: update existing item rather than add new
+              console.log(`Label event: ${label} → status: ${status} (item should already be in project)`);
+            } else if (eventName === 'issues' && payload.action === 'closed') {
+              console.log(`Issue closed — should move to Done (item should already be in project)`);
+            } else if (eventName === 'pull_request' && payload.action === 'opened') {
+              await addToProject(payload.pull_request.node_id, team, 'In Review');
+            } else if (eventName === 'pull_request' && payload.action === 'closed' && payload.pull_request.merged) {
+              console.log(`PR merged — should move to Done`);
+            }
+
+            // Notify Telegram
+            const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
+            const telegramChatId = process.env.TELEGRAM_CHAT_ID;
+            if (telegramToken && telegramChatId) {
+              const emoji = eventName === 'issues' ? '📋' : eventName === 'pull_request' ? '🔧' : '🔄';
+              const action = payload.action || 'sync';
+              const number = payload.issue?.number || payload.pull_request?.number || '';
+              const title = (payload.issue?.title || payload.pull_request?.title || '').substring(0, 60);
+              const msg = `[${team}] ${emoji} ${action} #${number} — ${title}`;
+              try {
+                await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+                  method: 'POST',
+                  headers: {'Content-Type': 'application/json'},
+                  body: JSON.stringify({chat_id: telegramChatId, text: msg})
+                });
+              } catch (e) {
+                console.log(`Telegram notify failed: ${e.message}`);
+              }
+            }
+        env:
+          MOTHERBOARD_PROJECT_ID: ${{ secrets.MOTHERBOARD_PROJECT_ID }}
+          MOTHERBOARD_STATUS_FIELD_ID: ${{ secrets.MOTHERBOARD_STATUS_FIELD_ID }}
+          MOTHERBOARD_TEAM_FIELD_ID: ${{ secrets.MOTHERBOARD_TEAM_FIELD_ID }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

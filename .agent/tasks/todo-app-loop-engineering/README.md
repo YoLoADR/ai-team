@@ -202,7 +202,7 @@ sans créer de conflit."
 Raisonnement :
 - Chaque projet a son propre dossier git clone
 - Les bots utilisent `terminal.cwd` pour pointer vers le bon projet
-- Les repos GitHub sont séparés (YoLoADR/ai-team, YoLoADR/ai-hirekit)
+- Les repos GitHub sont séparés (YoLoADR/ai-team-cuba, YoLoADR/ai-hirekit)
 - Les branches git sont séparées (feature/<issue>-<slug>)
 - Aucun partage de filesystem entre projets
 
@@ -222,7 +222,7 @@ Raisonnement :
 
 | Équipe | VM | Serveur | Orchestrateur | Repo GitHub | Statut |
 |---|---|---|---|---|---|
-| **Loop Engineering (Hermes)** — *cette équipe* | VM 102 `ai-agents-vm` | Precision | Hermes Agent | `YoLoADR/ai-team` | ✅ active |
+| **Loop Engineering (Hermes)** — *cette équipe* | VM 102 `ai-agents-vm` | Precision | Hermes Agent | `YoLoADR/ai-team-cuba` | ✅ active |
 | OpenHands Team | VM 101 `openhands-vm` | Precision | OpenHands | (non créé) | ⚠️ vide |
 | ai-sales-vm | VM 100 | Precision | Docker (cubes) | (non lié) | ✅ cubes sellers |
 | Maya (WhatsApp) | Contabo | Contabo | Docker | (non lié) | ✅maya-waha |
@@ -236,7 +236,7 @@ Raisonnement :
 │                    TON TÉLÉPHONE / ORDINATEUR                │
 │                                                              │
 │  Telegram → @loop_engineering_team_bot                       │
-│  CLI      → /Users/yohannravino/Factory/ai-team/delegate.sh  │
+│  CLI      → /Users/yohannravino/Factory/ai-team-cuba/delegate.sh  │
 └──────────────────────────┬──────────────────────────────────┘
                            │
                            ▼
@@ -321,7 +321,7 @@ Raisonnement :
 │                    GITHUB (YoLoADR)                          │
 │                                                              │
 │  Repos manipulés par CETTE équipe:                           │
-│  ├── YoLoADR/ai-team      (loop engineering + todo-app)     │
+│  ├── YoLoADR/ai-team-cuba      (loop engineering + todo-app)     │
 │  └── YoLoADR/ai-hirekit   (posting d'offres d'emploi)        │
 │                                                              │
 │  Repos NON touchés par cette équipe:                         │
@@ -352,7 +352,7 @@ Raisonnement :
 ### Local (ton Mac)
 
 ```
-/Users/yohannravino/Factory/ai-team/     ← CE DOSSIER (racine du projet)
+/Users/yohannravino/Factory/ai-team-cuba/     ← CE DOSSIER (racine du projet)
 ├── .agent/tasks/todo-app-loop-engineering/   ← Plan + suivi (pattern Merenza)
 ├── .agent/ARCHITECTURE.md                    ← Ce README
 ├── .github/                                  ← CI, templates GitHub
@@ -376,7 +376,7 @@ Raisonnement :
 
 ```
 /home/hermes/
-├── repo/                      → clone de YoLoADR/ai-team (projet principal)
+├── repo/                      → clone de YoLoADR/ai-team-cuba (projet principal)
 ├── projects/
 │   └── ai-hirekit/            → clone de YoLoADR/ai-hirekit (2e projet)
 ├── .hermes/

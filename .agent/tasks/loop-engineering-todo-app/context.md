@@ -43,7 +43,7 @@ implement → review → merge → deploy.
 ## Architecture cible
 
 ```
-/Users/yohannravino/Factory/ai-team/
+/Users/yohannravino/Factory/ai-team-cuba/
 │
 ├── .agent/tasks/loop-engineering-todo-app/    # Ce plan + suivi
 │
@@ -149,5 +149,5 @@ Netlify
 - Tâches : `todos.md` (ce dossier)
 - Journal : `insights.md` (ce dossier)
 - Architecture TGC de référence : `/Users/yohannravino/Factory/TGC/.agent/ARCHITECTURE.md.bak`
-- Note initiale : `/Users/yohannravino/Factory/ai-team/note.md`
+- Note initiale : `/Users/yohannravino/Factory/ai-team-cuba/note.md`
 - Pattern des tâches : `/Users/yohannravino/Factory/merenza/.agent/tasks/merenza-pilot-mvp/`

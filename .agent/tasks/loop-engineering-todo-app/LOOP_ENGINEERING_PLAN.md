@@ -5,7 +5,7 @@
 Le todo est un **sous-projet** du repo `ai-team`, situé dans `apps/todo/`.
 
 ```
-/Users/yohannravino/Factory/ai-team/
+/Users/yohannravino/Factory/ai-team-cuba/
 │
 ├── .agent/tasks/loop-engineering-todo-app/    # Plan + suivi
 │
@@ -557,7 +557,7 @@ jobs:
 - Créer GitHub Project V2 Kanban dans le repo `ai-team`
 - Créer GitHub App `ai-team-loop` et l'installer sur `ai-team`
 - Vérifier Ollama Cloud Pro + API key
-- Initialiser Git dans `/Users/yohannravino/Factory/ai-team/` et committer le plan
+- Initialiser Git dans `/Users/yohannravino/Factory/ai-team-cuba/` et committer le plan
 
 ### Phase 1 — Infrastructure OpenHands
 - Créer VM `openhands-vm` sur Precision

@@ -14,12 +14,12 @@ reste. Vous êtes notifié sur Telegram à chaque étape.
 
 | Quoi | Où | Comment y accéder |
 |---|---|---|
-| **Repo GitHub** | https://github.com/YoLoADR/ai-team | `gh repo view YoLoADR/ai-team` |
+| **Repo GitHub** | https://github.com/YoLoADR/ai-team-cuba | `gh repo view YoLoADR/ai-team-cuba` |
 | **Kanban** | https://github.com/users/YoLoADR/projects/3 | 5 colonnes : Backlog → Spec Ready → In Progress → In Review → Done |
 | **Issues** | https://github.com/YoLoADR/ai-team/issues | C'est là que vous déléguez des features |
 | **PRs** | https://github.com/YoLoADR/ai-team/pulls | Le Dev-bot y pousse son code, le Lead-Review y poste ses reviews |
-| **Plan & suivi** | `/Users/yohannravino/Factory/ai-team/.agent/tasks/loop-engineering-todo-app-v2/` | Local — ce dossier |
-| **Scaffold apps/todo** | `/Users/yohannravino/Factory/ai-team/apps/todo/` | Local — socle Next.js que les agents enrichissent |
+| **Plan & suivi** | `/Users/yohannravino/Factory/ai-team-cuba/.agent/tasks/loop-engineering-todo-app-v2/` | Local — ce dossier |
+| **Scaffold apps/todo** | `/Users/yohannravino/Factory/ai-team-cuba/apps/todo/` | Local — socle Next.js que les agents enrichissent |
 
 ### L'infrastructure des bots
 
@@ -65,7 +65,7 @@ keypair (pas de clé API à gérer).
 ### Méthode 1 — GitHub CLI (recommandé)
 
 ```bash
-gh issue create --repo YoLoADR/ai-team \
+gh issue create --repo YoLoADR/ai-team-cuba \
   --title "[Feature] Ajouter l'authentification JWT" \
   --label "feature" \
   --body "## Contexte
@@ -91,7 +91,7 @@ label `feature`.
 
 ```
 1. Issue créée (label "feature")
-   → GitHub Actions déclenche le workflow ai-loop.yml
+   → GitHub Actions déclenche le workflow cuba-loop.yml
    → SSH vers carapace → python3 run-agent.py po <issue> YoLoADR/ai-team
 
 2. PO-bot (glm-5.2:cloud)
@@ -152,10 +152,10 @@ label `feature`.
 
 | Action | Commande |
 |---|---|
-| Voir les issues | `gh issue list --repo YoLoADR/ai-team` |
-| Voir les PRs | `gh pr list --repo YoLoADR/ai-team` |
+| Voir les issues | `gh issue list --repo YoLoADR/ai-team-cuba` |
+| Voir les PRs | `gh pr list --repo YoLoADR/ai-team-cuba` |
 | Voir le Kanban | https://github.com/users/YoLoADR/projects/3 |
-| Voir les runs GitHub Actions | `gh run list --repo YoLoADR/ai-team --limit 10` |
+| Voir les runs GitHub Actions | `gh run list --repo YoLoADR/ai-team-cuba --limit 10` |
 | Voir les logs d'un agent | `ssh root@109.199.97.174 'tail -f /opt/ai-team-loop/logs/agent-*.log'` |
 | Voir les conteneurs Docker | `ssh root@109.199.97.174 'docker ps'` |
 | Interface OpenHands | `http://109.199.97.174:3020` |
@@ -166,19 +166,19 @@ label `feature`.
 
 ```bash
 # PO sur une issue existante
-gh workflow run ai-loop.yml --repo YoLoADR/ai-team \
+gh workflow run cuba-loop.yml --repo YoLoADR/ai-team-cuba \
   -f trigger_type=po-spec -f issue_number=5
 
 # Dev sur une issue avec spec prête
-gh workflow run ai-loop.yml --repo YoLoADR/ai-team \
+gh workflow run cuba-loop.yml --repo YoLoADR/ai-team-cuba \
   -f trigger_type=dev-impl -f issue_number=5
 
 # Dev-Fix sur une PR (après CHANGES_REQUESTED)
-gh workflow run ai-loop.yml --repo YoLoADR/ai-team \
+gh workflow run cuba-loop.yml --repo YoLoADR/ai-team-cuba \
   -f trigger_type=dev-fix -f issue_number=6
 
 # Lead-Review sur une PR
-gh workflow run ai-loop.yml --repo YoLoADR/ai-team \
+gh workflow run cuba-loop.yml --repo YoLoADR/ai-team-cuba \
   -f trigger_type=lead-review -f issue_number=6
 ```
 
@@ -188,8 +188,8 @@ gh workflow run ai-loop.yml --repo YoLoADR/ai-team \
 
 ### Isolation GitHub
 
-- **Repo dédié** : `YoLoADR/ai-team` — ne contient QUE le loop engineering
-- **GitHub App dédiée** : `ai-team-loop` (App ID 4472414) — installée UNIQUEMENT sur `YoLoADR/ai-team`
+- **Repo dédié** : `YoLoADR/ai-team-cuba` — ne contient QUE le loop engineering
+- **GitHub App dédiée** : `ai-team-loop` (App ID 4472414) — installée UNIQUEMENT sur `YoLoADR/ai-team-cuba`
 - **Labels dédiés** : `feature`, `bug`, `user-story`, `ready-for-dev` — créés dans ce repo uniquement
 - **Kanban dédié** : Project V2 #3 "AI Team Loop Engineering" — lié uniquement à ce repo
 
@@ -231,7 +231,7 @@ Si vous créez d'autres équipes de bots à l'avenir :
 ┌─────────────────────────────────────────────────────────────────────┐
 │ GITHUB (github.com)                                                  │
 │                                                                      │
-│  Repo: YoLoADR/ai-team                                               │
+│  Repo: YoLoADR/ai-team-cuba                                               │
 │  ├── Issues (feature, bug, user-story)                               │
 │  ├── PRs (ai/impl/<issue>)                                           │
 │  ├── Project V2 #3 (Kanban: Backlog → Spec Ready → In Progress →    │
@@ -241,7 +241,7 @@ Si vous créez d'autres équipes de bots à l'avenir :
 │  ├── Secrets (APP_ID, APP_PRIVATE_KEY, CARAPACE_*, LEAD_REVIEW_PAT,│
 │  │            TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, ...)            │
 │  └── Workflows                                                       │
-│      ├── .github/workflows/ai-loop.yml (PO → Dev → Review → Fix)   │
+│      ├── .github/workflows/cuba-loop.yml (PO → Dev → Review → Fix)   │
 │      ├── .github/workflows/ci.yml (lint + typecheck + test)         │
 │      └── .github/workflows/deploy.yml (Netlify)                    │
 │                                                                      │
@@ -344,7 +344,7 @@ timeout.
 | Fichier | Localisation | Rôle |
 |---|---|---|
 | `run-agent.py` | carapace `/opt/ai-team-loop/run-agent.py` | Script principal des 3 bots |
-| `ai-loop.yml` | repo `.github/workflows/ai-loop.yml` | Workflow GitHub Actions (relay SSH) |
+| `cuba-loop.yml` | repo `.github/workflows/cuba-loop.yml` | Workflow GitHub Actions (relay SSH) |
 | `ci.yml` | repo `apps/todo/.github/workflows/ci.yml` | CI lint + typecheck + test |
 | `deploy.yml` | repo `apps/todo/.github/workflows/deploy.yml` | CD Netlify |
 | `AGENTS.md` | repo `apps/todo/AGENTS.md` | Instructions pour les agents |
@@ -473,7 +473,7 @@ code.
 
 **Raisonnement** :
 - Bonne pratique 2026 : créer une GitHub App (pas plusieurs comptes personnels)
-- L'App est installée UNIQUEMENT sur le repo `YoLoADR/ai-team` (isolation)
+- L'App est installée UNIQUEMENT sur le repo `YoLoADR/ai-team-cuba` (isolation)
 - Permissions : Contents R/W, Issues R/W, Pull Requests R/W
 - **Problème découvert** : une GitHub App ne peut pas reviewer ses propres PRs
   (erreur 422 : "Review Can not request changes on your own pull request")
@@ -491,7 +491,7 @@ code.
 - Ouverture du port dans iptables mais Contabo bloque au niveau réseau
 - Nginx sur carapace est en mode stream (SNI routing), pas HTTP — impossible
   d'ajouter un location block
-- Solution : GitHub Actions workflow `ai-loop.yml` qui SSH vers carapace et exécute
+- Solution : GitHub Actions workflow `cuba-loop.yml` qui SSH vers carapace et exécute
   `run-agent.py`. Aucun port à ouvrir, utilise le port 22 (SSH) déjà ouvert.
 
 **Avantage** : pas de tunnel, pas de Cloudflare, pas de port à ouvrir. Juste SSH.
@@ -564,7 +564,7 @@ code.
 **Raisonnement** :
 - L'utilisateur a d'autres projets (TGC, merenza, sellkit, guardian-sales, etc.)
 - Risque de conflit si les bots touchent d'autres repos
-- L'App est installée UNIQUEMENT sur `YoLoADR/ai-team`
+- L'App est installée UNIQUEMENT sur `YoLoADR/ai-team-cuba`
 - Le script `run-agent.py` ne touche que ce repo
 - Pour créer une autre équipe : nouveau repo + nouvelle App + nouveau dossier
 
@@ -597,7 +597,7 @@ code.
 ### Phase 3 — GitHub App + secrets
 - Création de la GitHub App `ai-team-loop` (App ID 4472414) via Playwright
 - Permissions : Contents R/W, Issues R/W, Pull Requests R/W
-- Installation sur `YoLoADR/ai-team` uniquement
+- Installation sur `YoLoADR/ai-team-cuba` uniquement
 - Private key générée et stockée comme secret `APP_PRIVATE_KEY`
 - 10 secrets configurés : APP_ID, APP_PRIVATE_KEY, CARAPACE_*, LEAD_REVIEW_PAT,
   OLLAMA_CLOUD_API_KEY, TELEGRAM_*, WEBHOOK_SECRET

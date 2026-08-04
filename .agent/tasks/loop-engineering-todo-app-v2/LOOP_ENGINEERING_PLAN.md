@@ -23,7 +23,7 @@ Sources :
 Le todo est un **sous-projet** du repo `ai-team`, situé dans `apps/todo/`.
 
 ```
-/Users/yohannravino/Factory/ai-team/
+/Users/yohannravino/Factory/ai-team-cuba/
 │
 ├── .agent/tasks/loop-engineering-todo-app-v2/    # Plan v2 + suivi
 │
@@ -391,7 +391,7 @@ jobs:
 - Créer GitHub Project V2 Kanban dans `ai-team`
 - Créer GitHub App `ai-team-loop` et l'installer sur `ai-team`
 - Configurer les secrets GitHub (OLLAMA_CLOUD_API_KEY, GITHUB_APP_PRIVATE_KEY, NETLIFY)
-- Initialiser Git dans `/Users/yohannravino/Factory/ai-team/` et committer le plan
+- Initialiser Git dans `/Users/yohannravino/Factory/ai-team-cuba/` et committer le plan
 
 ### Phase 1 — Infrastructure OpenHands (carapace)
 - SSH carapace → créer dossier `/opt/ai-team-loop/`

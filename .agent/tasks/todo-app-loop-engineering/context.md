@@ -63,7 +63,7 @@ Modèles exclus (petits) : qwen2.5:7b, gemma3:12b, gemma3:4b — l'utilisateur v
 ## Architecture cible
 
 ```
-/Users/yohannravino/Factory/ai-team/
+/Users/yohannravino/Factory/ai-team-cuba/
 │
 ├── .agent/tasks/todo-app-loop-engineering/    # Ce plan + suivi
 ├── .agent/ARCHITECTURE.md                     # Architecture loop engineering
@@ -144,6 +144,6 @@ GitHub.com/<user>/ai-team
 - Journal : `insights.md` (ce dossier)
 - Architecture TGC de référence : `/Users/yohannravino/Factory/TGC/.agent/ARCHITECTURE.md.bak`
 - Catalogue Ollama Cloud : `/Users/yohannravino/Factory/TGC/ollama-cloud-modeles-2026-07.md`
-- Note initiale : `/Users/yohannravino/Factory/ai-team/note.md`
+- Note initiale : `/Users/yohannravino/Factory/ai-team-cuba/note.md`
 - Pattern des tâches : `/Users/yohannravino/Factory/merenza/.agent/tasks/merenza-pilot-mvp/`
 - API key Ollama Cloud : `/Users/yohannravino/Factory/sellkit/.env`

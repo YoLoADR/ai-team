@@ -1,5 +1,7 @@
 il manque le raisonnement qui à mener aux choix
 
+--> télégram web playright pour les tests live
+
 que puisse suivre et aussi commenté sur github kanban, mes commentaire doivent être pris en compte aussi par l'équipe
 que je puisse donner des instructions, suivres et commenter depuis le télégram dédier à l'équipe
 Idéalement tu devrais reprendre les pratiques manquantes qui pourrait servir à cette équipe, qu'on a implémenter sur les autres équipe; afin que les équipes soit aligner mais chacune indépendante afin de savoir laquelle performe dans quoi ou ne performe pas
@@ -11,6 +13,8 @@ Ton plan n'est pas assez détaillés, j'ai l'impression que tu as pris des raccr
 J'ai l'impression que tu as pris des raccourcis ce qui fait que l'implémentation semble incomplète, je souhaitais à la base developper le projet en mode TDD mais maintenant que c'est implémenter je te propose de faire de mettre des test d'intégrations
 
 sauvegarde le plan d'abord respectant le patterns des autres tache /Users/yohannravino/Factory/merenza/.agent/tasks . puis commence à implémenter la tache. n'oublie pas de versionné tes changement avec git et documenter ta progression dans les docuements concernés
+
+sauvegarde le plan d'abord respectant le patterns des autres tache /Users/yohannravino/Factory/merenza/.agent/tasks . puis commence à implémenter la tache. documenter ta progression dans les docuements concernés
 
 
 ---

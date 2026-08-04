@@ -11,7 +11,7 @@
 - [~] 0.3 Configurer l'accès GitHub pour les agents (GitHub App impossible sans UI → fallback PAT OAuth `gho_...`)
 - [x] 0.4 Vérifier compte Ollama Cloud Pro + récupérer API key
   - Preuve : `curl https://ollama.com/api/tags` retourne 200 avec 18 modèles (deepseek-v4-pro, kimi-k2.6, etc.)
-- [x] 0.5 Initialiser Git dans `/Users/yohannravino/Factory/ai-team/` et push sur origin
+- [x] 0.5 Initialiser Git dans `/Users/yohannravino/Factory/ai-team-cuba/` et push sur origin
   - Preuve : commits pushed to https://github.com/YoLoADR/ai-team/tree/main
 
 ## Phase 1 — Infrastructure Hermes
